@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Sans_Georgian } from "next/font/google";
 
 import "./globals.css";
+import { ConvexClientProvider } from "./ConvexClientProvider";
 
 const defaultFont = Noto_Sans_Georgian({ subsets: ["latin"] });
 
@@ -25,7 +26,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={defaultFont.className}>{children}</body>
+      <body className={defaultFont.className}>
+        <ConvexClientProvider>{children}</ConvexClientProvider>
+      </body>
     </html>
   );
 }
