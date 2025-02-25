@@ -9,8 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { primaryNavItems } from "@/utils";
-import UserProfile from "./user-profile";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { api } from "@/convex/_generated/api";
@@ -19,8 +17,8 @@ import { useEffect, useState } from "react";
 import { Hash, PlusIcon } from "lucide-react";
 import { Doc } from "@/convex/_generated/dataModel";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
-import AddProjectDialog from "../projects/add-project-dialog";
-import AddLabelDialog from "../labels/add-label-dialog";
+import { primaryNavItems } from "@/utils";
+import UserProfile from "./user-profile";
 
 interface MyListTitleType {
   [key: string]: string;
@@ -29,7 +27,7 @@ interface MyListTitleType {
 export default function SideBar() {
   const pathname = usePathname();
 
-  const projectList = useQuery(api.projects.getProjects);
+  //   const projectList = useQuery(api.projects.getProjects);
 
   const LIST_OF_TITLE_IDS: MyListTitleType = {
     primary: "",
@@ -48,13 +46,13 @@ export default function SideBar() {
       };
     });
   };
-  useEffect(() => {
-    if (projectList) {
-      const projectItems = renderItems(projectList);
-      const items = [...primaryNavItems, ...projectItems];
-      setNavItems(items);
-    }
-  }, [projectList]);
+  //   useEffect(() => {
+  //     if (projectList) {
+  //       const projectItems = renderItems(projectList);
+  //       const items = [...primaryNavItems, ...projectItems];
+  //       setNavItems(items);
+  //     }
+  //   }, [projectList]);
 
   return (
     <div className="hidden border-r bg-muted/40 md:block">
@@ -76,7 +74,7 @@ export default function SideBar() {
                     {LIST_OF_TITLE_IDS[id]}
                   </p>
                   {LIST_OF_TITLE_IDS[id] === "My Projects" && (
-                    <AddProjectDialog />
+                    <div>{/* <AddProjectDialog /> */}</div>
                   )}
                 </div>
               )}
@@ -113,7 +111,7 @@ export default function SideBar() {
                           aria-label="Add a Label"
                         />
                       </DialogTrigger>
-                      <AddLabelDialog />
+                      {/* <AddLabelDialog /> */}
                     </Dialog>
                   )}
                 </div>
