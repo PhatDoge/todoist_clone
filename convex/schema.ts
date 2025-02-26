@@ -1,3 +1,4 @@
+import { boolean } from "convex-helpers/validators";
 import { defineSchema, defineTable } from "convex/server";
 import { v, Validator } from "convex/values";
 
@@ -112,5 +113,9 @@ export default defineSchema({
     userId: v.union(v.id("users"), v.null()),
     name: v.string(),
     type: v.union(v.literal("user"), v.literal("system")),
+  }),
+  tasks: defineTable({
+    text: v.string(),
+    isCompleted: boolean,
   }),
 });

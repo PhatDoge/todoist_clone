@@ -2,8 +2,6 @@
 import MobileNav from "@/components/nav/mobile-nav";
 import SideBar from "@/components/nav/side-bar";
 import TodoList from "@/components/todos/todo-list";
-import Tasks from "@/components/todovex/tasks";
-import UserProfile from "@/components/todovex/user-profile";
 
 export default function LoggedIn() {
   return (
