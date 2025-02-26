@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Sans_Georgian } from "next/font/google";
 
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const defaultFont = Noto_Sans_Georgian({ subsets: ["latin"] });
 
@@ -26,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={defaultFont.className}>{children}</body>
+      <Toaster />
     </html>
   );
 }

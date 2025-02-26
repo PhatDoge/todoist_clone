@@ -2,6 +2,7 @@ import { Doc } from "@/convex/_generated/dataModel";
 import Task from "./task";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { toast } from "sonner"; // Import sonner toast
 
 export default function Todos({ items }: { items: Array<Doc<"todos">> }) {
   const checkATodo = useMutation(api.todos.checkATodo);
@@ -10,12 +11,18 @@ export default function Todos({ items }: { items: Array<Doc<"todos">> }) {
   const handleOnChangeTodo = (task: Doc<"todos">) => {
     if (task.isCompleted) {
       unCheckATodo({ taskId: task._id });
+      toast.info(`Tarea "${task.taskName}" marcada como pendiente ❌`, {
+        duration: 2000,
+      });
     } else {
       checkATodo({ taskId: task._id });
+      toast.success(`Tarea "${task.taskName}" completeda yay!! 🎉`, {
+        duration: 4000,
+      });
     }
   };
 
-  return items.map((task, idx) => (
+  return items.map((task) => (
     <Task
       key={task._id}
       {...task}
