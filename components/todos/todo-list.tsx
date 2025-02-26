@@ -3,19 +3,25 @@
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 
-import Task from "./task";
+import { Loader2 } from "lucide-react";
+import Todos from "./todos";
+import { CompletedTodos } from "./completed-todos";
 
 export default function TodoList() {
   const todos = useQuery(api.todos.get) ?? [];
   const completedTodos = useQuery(api.todos.completedTodos) ?? [];
   const inCompletedTodos = useQuery(api.todos.inCompletedTodos) ?? [];
+  const totalTodos = useQuery(api.todos.totalTodos) ?? 0;
 
   if (
     todos === undefined ||
     completedTodos === undefined ||
     inCompletedTodos === undefined
   ) {
-    <p>Loading...</p>;
+    <p>
+      <Loader2 />
+      Cargando...
+    </p>;
   }
   return (
     <div className="xl:px-40">
@@ -24,16 +30,13 @@ export default function TodoList() {
       </div>
 
       <div className="flex flex-col gap-1 py-4">
-        {inCompletedTodos.map((task, idx) => (
-          <Task {...task} key={task._id} />
-        ))}
+        <Todos items={inCompletedTodos} />
       </div>
 
       <div className="flex flex-col gap-1 py-4">
-        {completedTodos.map((task, idx) => (
-          <Task {...task} key={task._id} />
-        ))}
+        <Todos items={completedTodos} />
       </div>
+      <CompletedTodos totalTodos={totalTodos} />
     </div>
   );
 }

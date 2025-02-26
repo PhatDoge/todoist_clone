@@ -1,4 +1,5 @@
-import { query } from "./_generated/server";
+import { query, mutation } from "./_generated/server";
+import { v } from "convex/values";
 
 export const get = query({
   args: {},
@@ -24,5 +25,34 @@ export const inCompletedTodos = query({
       .query("todos")
       .filter((q) => q.eq(q.field("isCompleted"), false))
       .collect();
+  },
+});
+
+export const totalTodos = query({
+  args: {},
+  handler: async (ctx) => {
+    const todos = await ctx.db
+      .query("todos")
+      .filter((q) => q.eq(q.field("isCompleted"), true))
+      .collect();
+
+    return todos.length || 0;
+  },
+});
+
+// Create a new task with the given text
+export const checkATodo = mutation({
+  args: { taskId: v.id("todos") },
+  handler: async (ctx, { taskId }) => {
+    const newTaskId = await ctx.db.patch(taskId, { isCompleted: true });
+    return newTaskId;
+  },
+});
+
+export const unCheckATodo = mutation({
+  args: { taskId: v.id("todos") },
+  handler: async (ctx, { taskId }) => {
+    const newTaskId = await ctx.db.patch(taskId, { isCompleted: false });
+    return newTaskId;
   },
 });

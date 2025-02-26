@@ -12,38 +12,47 @@ import {
 const Task = ({
   taskName,
   isCompleted,
-  onChange,
-  key,
+  handleOnChange,
+  _id,
 }: {
   taskName: string;
   isCompleted: boolean;
-  onChange: () => void;
-  key: string;
+  handleOnChange: () => void;
+  _id: string;
 }) => {
   return (
-    <Dialog>
-      <div key={key} className="flex items-center space-x-2">
-        <Checkbox
-          id="todo"
-          className={clsx(
-            "w-5 h-5 rounded-xl",
-            isCompleted && "data-[state=checked]:bg-gray-300 border-gray-300"
-          )}
-          checked={isCompleted}
-          onCheckedChange={onChange}
-        />
-        <DialogTrigger asChild>
-          <div className="flex flex-col items-start cursor-pointer">
-            <button
+    <div
+      key={_id}
+      className="flex items-center space-x-2 border-b-2 p-2 border-gray-100 animate-in fade-in"
+    >
+      <Dialog>
+        <div className="flex gap-2 items-center justify-end w-full">
+          <div className="flex gap-2 w-full">
+            <Checkbox
+              id="todo"
               className={clsx(
-                "text-sm font-normal text-left",
-                isCompleted && "line-through text-foreground/30"
+                "w-5 h-5 rounded-xl",
+                isCompleted &&
+                  "data-[state=checked]:bg-gray-300 border-gray-300"
               )}
-            >
-              {taskName}
-            </button>
+              checked={isCompleted}
+              onCheckedChange={handleOnChange}
+            />
+            <DialogTrigger asChild>
+              <div className="flex flex-col items-start">
+                <button
+                  className={clsx(
+                    "text-sm font-normal text-left",
+                    isCompleted && "line-through text-foreground/30"
+                  )}
+                >
+                  {taskName}
+                </button>
+                <div></div>
+              </div>
+            </DialogTrigger>
           </div>
-        </DialogTrigger>
+        </div>
 
         {/* Dialog Content */}
         <DialogContent>
@@ -55,8 +64,8 @@ const Task = ({
             <p>Status: {isCompleted ? "Completed" : "Pending"}</p>
           </div>
         </DialogContent>
-      </div>
-    </Dialog>
+      </Dialog>
+    </div>
   );
 };
 
