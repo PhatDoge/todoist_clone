@@ -6,6 +6,7 @@ import { useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
 import Todos from "./todos";
 import { CompletedTodos } from "./completed-todos";
+import { AddTaskWrapper } from "../add-tasks/add-task-button";
 
 export default function TodoList() {
   const todos = useQuery(api.todos.get) ?? [];
@@ -32,6 +33,8 @@ export default function TodoList() {
       <div className="flex flex-col gap-1 py-4">
         <Todos items={inCompletedTodos} />
       </div>
+
+      <AddTaskWrapper />
 
       <div className="flex flex-col gap-1 py-4">
         <Todos items={completedTodos} />
