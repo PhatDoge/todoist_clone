@@ -26,8 +26,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={defaultFont.className}>{children}</body>
-      <Toaster />
+      <body className={defaultFont.className}>
+        {children}
+
+        <Toaster />
+      </body>
     </html>
   );
 }
