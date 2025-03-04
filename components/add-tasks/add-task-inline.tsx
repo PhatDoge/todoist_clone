@@ -69,16 +69,18 @@ export const AddTaskInline = ({
 
   const createATodoMutation = useMutation(api.todos.createATodo);
 
+  const defaultValues = {
+    taskName: "",
+    description: "",
+    priority: "1",
+    dueDate: new Date(),
+    projectId: "k978m8nh1dmc71d5nqxz213j057b1csk" as Id<"projects">,
+    labelId: "k574jkhbtndbby2xcvmxrxbv1h7b01wd" as Id<"labels">,
+  };
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      taskName: "",
-      description: "",
-      priority: "1",
-      dueDate: new Date(),
-      projectId: "k978m8nh1dmc71d5nqxz213j057b1csk" as Id<"projects">,
-      labelId: "k574jkhbtndbby2xcvmxrxbv1h7b01wd" as Id<"labels">,
-    },
+    defaultValues,
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
@@ -97,6 +99,11 @@ export const AddTaskInline = ({
 
       if (mutationID != undefined) {
         toast.success("Tarea creada con exito! 👽👻", { duration: 3000 });
+        form.reset({
+          ...defaultValues,
+          projectId: "k978m8nh1dmc71d5nqxz213j057b1csk" as Id<"projects">,
+          labelId: "k574jkhbtndbby2xcvmxrxbv1h7b01wd" as Id<"labels">,
+        });
       }
     }
   }
@@ -293,4 +300,3 @@ export const AddTaskInline = ({
     </div>
   );
 };
-3:16
