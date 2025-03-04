@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
-import { CalendarIcon, Text } from "lucide-react";
+import { CalendarIcon, Loader2, Text } from "lucide-react";
 import { Card, CardFooter } from "../ui/card";
 import { Dispatch, SetStateAction } from "react";
 import {
@@ -34,6 +34,11 @@ import {
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
+import { Doc, Id } from "@/convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import moment, { duration } from "moment";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   taskName: z.string().min(2, {
@@ -59,6 +64,11 @@ export const AddTaskInline = ({
 }: {
   setShowAddTask: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const labels = useQuery(api.labels.getLabels) ?? [];
+  const projects = useQuery(api.projects.getProjects) ?? [];
+
+  const createATodoMutation = useMutation(api.todos.createATodo);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -66,20 +76,34 @@ export const AddTaskInline = ({
       description: "",
       priority: "1",
       dueDate: new Date(),
-      projectId: "k978m8nh1dmc71d5nqxz213j057b1csk",
-      labelId: "k574jkhbtndbby2xcvmxrxbv1h7b01wd",
+      projectId: "k978m8nh1dmc71d5nqxz213j057b1csk" as Id<"projects">,
+      labelId: "k574jkhbtndbby2xcvmxrxbv1h7b01wd" as Id<"labels">,
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-    setShowAddTask(false);
+  function onSubmit(data: z.infer<typeof formSchema>) {
+    const { taskName, description, priority, dueDate, projectId, labelId } =
+      data;
+
+    if (projectId) {
+      const mutationID = createATodoMutation({
+        taskName,
+        description,
+        priority: parseInt(priority),
+        dueDate: moment(dueDate).valueOf(),
+        projectId: projectId as Id<"projects">,
+        labelId: labelId as Id<"labels">,
+      });
+
+      if (mutationID != undefined) {
+        toast.success("Tarea creada con exito! 👽👻", { duration: 3000 });
+      }
+    }
   }
 
   return (
     <div>
+      {JSON.stringify(form.getValues(), null, 2)}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -126,7 +150,7 @@ export const AddTaskInline = ({
           />
 
           {/* Added missing fields */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex gap-2">
             <FormField
               control={form.control}
               name="dueDate"
@@ -165,6 +189,7 @@ export const AddTaskInline = ({
               )}
             />
 
+            {/* campos adicionales */}
             <FormField
               control={form.control}
               name="priority"
@@ -180,10 +205,38 @@ export const AddTaskInline = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="1">Prioridad Baja</SelectItem>
-                      <SelectItem value="2">Prioridad Media</SelectItem>
-                      <SelectItem value="3">Prioridad Alta</SelectItem>
-                      <SelectItem value="4">Prioridad Muy Alta</SelectItem>
+                      {[1, 2, 3, 4].map((item, idx) => (
+                        <SelectItem key={idx} value={item.toString()}>
+                          Prioridad {item}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="labelId"
+              render={({ field }) => (
+                <FormItem>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccione una etiqueta" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {labels.map((label: Doc<"labels">, idx) => (
+                        <SelectItem key={idx} value={label._id}>
+                          {label.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -191,6 +244,33 @@ export const AddTaskInline = ({
               )}
             />
           </div>
+          <FormField
+            control={form.control}
+            name="projectId"
+            render={({ field }) => (
+              <FormItem>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar un proyecto" />
+                    </SelectTrigger>
+                  </FormControl>
+
+                  <SelectContent>
+                    {projects.map((project: Doc<"projects">, idx) => (
+                      <SelectItem key={idx} value={project._id}>
+                        {project.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <CardFooter className="flex flex-col lg:flex-row lg:justify-between gap-2 border-t-2 pt-3">
             <div className="w-full lg:w-1/4"></div>
@@ -213,4 +293,4 @@ export const AddTaskInline = ({
     </div>
   );
 };
-3:02:14
+3:16
