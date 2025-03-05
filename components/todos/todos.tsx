@@ -22,10 +22,10 @@ export default function Todos({ items }: { items: Array<Doc<"todos">> }) {
     }
   };
 
-  return items.map((task) => (
+  return items.map((task: Doc<"todos">) => (
     <Task
       key={task._id}
-      {...task}
+      data={task}
       handleOnChange={() => handleOnChangeTodo(task)}
     />
   ));

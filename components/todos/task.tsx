@@ -1,25 +1,24 @@
 import React from "react";
 import { Checkbox } from "../ui/checkbox";
 import clsx from "clsx";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
+import { Dialog, DialogTrigger } from "../ui/dialog";
+import { Doc, Id } from "@/convex/_generated/dataModel";
+import { AddTaskDialog } from "../add-tasks/add-task-dialog";
 
 const Task = ({
-  taskName,
+  data,
+
   isCompleted,
   handleOnChange,
   _id,
 }: {
+  data: Doc<"todos">;
   taskName: string;
   isCompleted: boolean;
+  _id: Id<"todos">;
   handleOnChange: () => void;
-  _id: string;
 }) => {
+  const { taskName } = data;
   return (
     <div
       key={_id}
@@ -54,16 +53,7 @@ const Task = ({
           </div>
         </div>
 
-        {/* Dialog Content */}
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Task Details</DialogTitle>
-          </DialogHeader>
-          <div>
-            <p>This is your task: {taskName}</p>
-            <p>Status: {isCompleted ? "Completed" : "Pending"}</p>
-          </div>
-        </DialogContent>
+        <AddTaskDialog data={data} />
       </Dialog>
     </div>
   );
