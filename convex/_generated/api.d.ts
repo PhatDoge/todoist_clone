@@ -18,7 +18,6 @@ import type * as authAdapter from "../authAdapter.js";
 import type * as http from "../http.js";
 import type * as labels from "../labels.js";
 import type * as projects from "../projects.js";
-import type * as tasks from "../tasks.js";
 import type * as todos from "../todos.js";
 
 /**
@@ -35,7 +34,6 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   labels: typeof labels;
   projects: typeof projects;
-  tasks: typeof tasks;
   todos: typeof todos;
 }>;
 export declare const api: FilterApi<

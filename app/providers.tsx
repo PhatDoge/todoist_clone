@@ -1,5 +1,5 @@
 "use client";
-import { ConvexProvider, ConvexReactClient } from "convex/react";
+import { ConvexProviderWithAuth, ConvexReactClient } from "convex/react";
 import { Session } from "next-auth";
 import { SessionProvider, useSession } from "next-auth/react";
 import { ReactNode, useMemo } from "react";
@@ -21,15 +21,10 @@ function useAuth() {
         if (forceRefreshToken) {
           const session = await update();
           return session?.convexToken ?? null;
-
-          // return convexTokenFromSession(session);
         }
-        // return convexToken;
+        return session?.convexToken ?? null;
       },
     }),
-    // We only care about the user changes, and don't want to
-    // bust the memo when we fetch a new token.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [JSON.stringify(session?.user)]
   );
 }
@@ -43,10 +38,9 @@ export default function Providers({
 }) {
   return (
     <SessionProvider session={session}>
-      <ConvexProvider client={convex} useAuth={useAuth}>
+      <ConvexProviderWithAuth client={convex} useAuth={useAuth}>
         {children}
-      </ConvexProvider>
-      ;
+      </ConvexProviderWithAuth>
     </SessionProvider>
   );
 }

@@ -10,18 +10,17 @@ const Task = ({
 
   isCompleted,
   handleOnChange,
-  _id,
 }: {
   data: Doc<"todos">;
   taskName: string;
   isCompleted: boolean;
-  _id: Id<"todos">;
+
   handleOnChange: () => void;
 }) => {
   const { taskName } = data;
   return (
     <div
-      key={_id}
+      key={data._id}
       className="flex items-center space-x-2 border-b-2 p-2 border-gray-100 animate-in fade-in"
     >
       <Dialog>

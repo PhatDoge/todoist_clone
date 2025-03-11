@@ -25,7 +25,6 @@ export default function Todos({ items }: { items: Array<Doc<"todos">> }) {
   return items.map((task: Doc<"todos">) => (
     <Task
       taskName={task.taskName}
-      _id={task._id}
       isCompleted={task.isCompleted}
       key={task._id}
       data={task}

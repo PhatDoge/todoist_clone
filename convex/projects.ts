@@ -1,10 +1,20 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { handleUserId } from "./auth";
 
 export const getProjects = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("projects").collect();
+    const userId = await handleUserId(ctx);
+
+    if (userId) {
+      return await ctx.db
+        .query("projects")
+        .filter((q) => q.eq(q.field("userId"), userId))
+        .collect();
+    }
+
+    return [];
   },
 });
 
@@ -13,11 +23,17 @@ export const getProjectByProjectId = query({
     projectId: v.id("projects"),
   },
   handler: async (ctx, { projectId }) => {
-    const project = await ctx.db
-      .query("projects")
-      .filter((q) => q.eq(q.field("_id"), projectId))
-      .collect();
+    const userId = await handleUserId(ctx);
+    if (userId) {
+      const project = await ctx.db
+        .query("projects")
+        .filter((q) => q.eq(q.field("userId"), userId))
+        .filter((q) => q.eq(q.field("_id"), projectId))
+        .collect();
 
-    return project?.[0] || null;
+      return project?.[0] || null;
+    }
+
+    return null;
   },
 });
