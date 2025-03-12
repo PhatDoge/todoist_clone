@@ -11,7 +11,7 @@ const Task = ({
   isCompleted,
   handleOnChange,
 }: {
-  data: Doc<"todos">;
+  data: Doc<"todos"> | Doc<"subTodos">;
   taskName: string;
   isCompleted: boolean;
 

@@ -8,10 +8,13 @@ import {
 } from "../ui/dialog";
 import { Doc } from "@/convex/_generated/dataModel";
 import { Label } from "../ui/label";
-import { Calendar, Flag, Hash, Tag } from "lucide-react";
+import { Calendar, ChevronDown, Flag, Hash, Tag } from "lucide-react";
 import { format } from "date-fns";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Button } from "../ui/button";
+import Task from "../todos/task";
+import { checkASubTodo } from "@/convex/subTodos";
 
 export const AddTaskDialog = ({
   data: { taskName, description, projectId, labelId, priority, dueDate },
@@ -25,7 +28,16 @@ export const AddTaskDialog = ({
     labelId,
   });
 
-  const [todoDetails, setTodoDetails] = useState([]);
+  const incompletedSubtodosByProject =
+    useQuery(api.subTodos.inCompletedSubTodos) ?? [];
+
+  const [todoDetails, setTodoDetails] = useState<
+    {
+      labelName: string;
+      value: string | number | undefined;
+      icon: JSX.Element;
+    }[]
+  >([]);
 
   useEffect(() => {
     const data = [
@@ -55,16 +67,42 @@ export const AddTaskDialog = ({
   }, [project, label?.name, priority, dueDate]);
 
   return (
-    <DialogContent className="max-w-4xl lg:min-h-[500px] flex flex-col md:flex-row lg:justify-between overflow-auto">
+    <DialogContent className="max-w-4xl lg:h-4/6 flex flex-col md:flex-row lg:justify-between text-right ">
       <DialogHeader className="w-full">
         <DialogTitle>{taskName}</DialogTitle>
-        <DialogDescription>{description}</DialogDescription>
+        <DialogDescription>
+          <p className="my-2 capitalize">{description}</p>
+
+          <div className="flex items-center gap-1 mt-12 border-b-2 border-gray-100 pb-2 flex-wrap sm:justify-between lg-gap-0">
+            <div className="flex gap-1">
+              <ChevronDown className="w-4 h-4 text-primary" />
+
+              <p className="font-bold flex text-sm text-gray-900">Sub Tareas</p>
+            </div>
+            <div>
+              <Button variant={"outline"}>Suguiere con IA</Button>
+            </div>
+          </div>
+          <div className="pl-4">
+            {incompletedSubtodosByProject.map((task) => {
+              return (
+                <Task
+                  key={task._id}
+                  data={task}
+                  isCompleted={task.isCompleted}
+                  handleOnChange={() => checkASubTodo({ taskId: task._id })}
+                />
+              );
+            })}
+          </div>
+        </DialogDescription>
       </DialogHeader>
+
       <div className="flex flex-col gap-2 bg-gray-100 lg:w-1/2">
         {todoDetails.map(({ labelName, value, icon }, idx) => (
           <div
-            key={`${value}=${idx}`}
-            className="grid gap-2 p-4 border-b-2 w-full"
+          key={`${value}=${idx}`}
+          className="grid gap-2 p-4 border-b-2 w-full"
           >
             <Label className="flex items-start">{labelName}</Label>
             <div className="flex text-left items-center justify-start gap-2 pb-2">
@@ -77,3 +115,4 @@ export const AddTaskDialog = ({
     </DialogContent>
   );
 };
+4:00:05
