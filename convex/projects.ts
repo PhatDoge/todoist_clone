@@ -8,10 +8,14 @@ export const getProjects = query({
     const userId = await handleUserId(ctx);
 
     if (userId) {
-      return await ctx.db
+      const userProjects = await ctx.db
         .query("projects")
         .filter((q) => q.eq(q.field("userId"), userId))
         .collect();
+
+      const systemProjects = await ctx.db.query("projects").collect();
+
+      return [...userProjects, ...systemProjects];
     }
 
     return [];
@@ -27,7 +31,6 @@ export const getProjectByProjectId = query({
     if (userId) {
       const project = await ctx.db
         .query("projects")
-        .filter((q) => q.eq(q.field("userId"), userId))
         .filter((q) => q.eq(q.field("_id"), projectId))
         .collect();
 

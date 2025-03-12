@@ -7,10 +7,14 @@ export const getLabels = query({
   handler: async (ctx) => {
     const userId = await handleUserId(ctx);
     if (userId) {
-      return await ctx.db
+      const userLabels = await ctx.db
         .query("labels")
         .filter((q) => q.eq(q.field("userId"), userId))
         .collect();
+
+      const systemLabels = await ctx.db.query("labels").collect();
+
+      return [...systemLabels, ...userLabels];
     }
 
     return [];
