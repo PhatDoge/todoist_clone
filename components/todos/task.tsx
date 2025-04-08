@@ -12,7 +12,6 @@ const Task = ({
   handleOnChange,
 }: {
   data: Doc<"todos"> | Doc<"subTodos">;
-  taskName: string;
   isCompleted: boolean;
 
   handleOnChange: () => void;

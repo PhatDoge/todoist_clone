@@ -61,21 +61,29 @@ const formSchema = z.object({
 
 export const AddTaskInline = ({
   setShowAddTask,
+  parentTask,
 }: {
   setShowAddTask: Dispatch<SetStateAction<boolean>>;
+  parentTask: Doc<"todos">;
 }) => {
+  const projectId = parentTask?.projectId || "k978m8nh1dmc71d5nqxz213j057b1csk";
+  const labelId = parentTask?.labelId || "k574jkhbtndbby2xcvmxrxbv1h7b01wd";
+  const priority = parentTask.priority?.toString() || 1;
+  const parentId = parentTask?._id;
+4:12:20
   const labels = useQuery(api.labels.getLabels) ?? [];
   const projects = useQuery(api.projects.getProjects) ?? [];
 
   const createATodoMutation = useMutation(api.todos.createATodo);
+  const createASubTodoMutation = useMutation(api.subTodos.createASubTodo);
 
   const defaultValues = {
     taskName: "",
     description: "",
-    priority: "1",
+    priority: priority.toString(), // cast priority to string
     dueDate: new Date(),
-    projectId: "k978m8nh1dmc71d5nqxz213j057b1csk" as Id<"projects">,
-    labelId: "k574jkhbtndbby2xcvmxrxbv1h7b01wd" as Id<"labels">,
+    projectId,
+    labelId,
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -88,22 +96,37 @@ export const AddTaskInline = ({
       data;
 
     if (projectId) {
-      const mutationID = createATodoMutation({
-        taskName,
-        description,
-        priority: parseInt(priority),
-        dueDate: moment(dueDate).valueOf(),
-        projectId: projectId as Id<"projects">,
-        labelId: labelId as Id<"labels">,
-      });
-
-      if (mutationID != undefined) {
-        toast.success("Tarea creada con exito! 👽👻", { duration: 3000 });
-        form.reset({
-          ...defaultValues,
-          projectId: "k978m8nh1dmc71d5nqxz213j057b1csk" as Id<"projects">,
-          labelId: "k574jkhbtndbby2xcvmxrxbv1h7b01wd" as Id<"labels">,
+      if (parentId) {
+        const mutationID = createASubTodoMutation({
+          parentId,
+          taskName,
+          description,
+          priority: parseInt(priority),
+          dueDate: moment(dueDate).valueOf(),
+          projectId: projectId as Id<"projects">,
+          labelId: labelId as Id<"labels">,
         });
+        if (mutationID != undefined) {
+          toast.success("Subtarea creada con exito! 👽👻", { duration: 3000 });
+          form.reset({
+            ...defaultValues,
+          });
+        }
+      } else {
+        const mutationID = createATodoMutation({
+          taskName,
+          description,
+          priority: parseInt(priority),
+          dueDate: moment(dueDate).valueOf(),
+          projectId: projectId as Id<"projects">,
+          labelId: labelId as Id<"labels">,
+        });
+        if (mutationID != undefined) {
+          toast.success("Tarea creada con exito! 👽👻", { duration: 3000 });
+          form.reset({
+            ...defaultValues,
+          });
+        }
       }
     }
   }
