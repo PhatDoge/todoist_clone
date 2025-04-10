@@ -49,9 +49,8 @@ const Task = ({
               </div>
             </DialogTrigger>
           </div>
+          {!("parentId" in data) && <AddTaskDialog data={data} />}
         </div>
-
-        <AddTaskDialog data={data} />
       </Dialog>
     </div>
   );

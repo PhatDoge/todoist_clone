@@ -68,9 +68,9 @@ export const AddTaskInline = ({
 }) => {
   const projectId = parentTask?.projectId || "k978m8nh1dmc71d5nqxz213j057b1csk";
   const labelId = parentTask?.labelId || "k574jkhbtndbby2xcvmxrxbv1h7b01wd";
-  const priority = parentTask.priority?.toString() || 1;
+  const priority = parentTask?.priority?.toString() || "1";
   const parentId = parentTask?._id;
-4:12:20
+
   const labels = useQuery(api.labels.getLabels) ?? [];
   const projects = useQuery(api.projects.getProjects) ?? [];
 
@@ -227,7 +227,7 @@ export const AddTaskInline = ({
                 <FormItem>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    defaultValue={priority}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -254,7 +254,7 @@ export const AddTaskInline = ({
                 <FormItem>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    defaultValue={labelId || field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -281,7 +281,7 @@ export const AddTaskInline = ({
               <FormItem>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  defaultValue={projectId || field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
