@@ -10,24 +10,25 @@ import Todos from "../todos/todos";
 import moment from "moment";
 
 import "moment/locale/es"; // <-- Import Spanish locale
+import { todayTodos } from "@/convex/todos";
 
 moment.locale("es"); // <-- Set moment to use Spanish
 
-export default function Today() {
-  const todos = useQuery(api.todos.get) ?? [];
-  const todayTodos = useQuery(api.todos.todayTodos) ?? [];
+export default function Upcoming() {
+  const groupedTodosByDate = useQuery(api.todos.groupTodosByDate) ?? [];
   const overdueTodos = useQuery(api.todos.overdueTodos) ?? [];
+  const todayTodos = useQuery(api.todos.todayTodos) ?? [];
 
-  if (todos === undefined || todayTodos === undefined) {
-    <p>
-      <Loader2 />
-      Cargando...
-    </p>;
-  }
+  //     if (todos === undefined || todayTodos === undefined) {
+  //       <p>
+  //         <Loader2 />
+  //         Cargando...
+  //       </p>;
+  //    }
   return (
     <div className="xl:px-40">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold md:text-2xl">Hoy</h1>
+        <p className="text-lg font-semibold md:text-2xl">Tareas próximas</p>
       </div>
 
       <div className="flex flex-col gap-1 py-4">
@@ -44,6 +45,21 @@ export default function Today() {
           {moment(new Date()).format("dddd")}
         </p>
         <Todos items={todayTodos} />
+
+        {Object.keys(groupedTodosByDate).map((dueDate) => {
+          return (
+            <div key={dueDate} className="mb-6">
+              <p className="font-bold flex items-center text-sm">
+                {moment(dueDate).format("LL")}
+                <Dot />
+                {moment(dueDate).format("dddd")}
+              </p>
+              <ul>
+                <Todos items={groupedTodosByDate[dueDate]} />
+              </ul>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
