@@ -174,6 +174,10 @@ export const groupTodosByDate = query({
         .query("todos")
         .filter((q) => q.eq(q.field("userId"), userId))
         .filter((q) => q.gt(q.field("dueDate"), new Date().getTime()))
+        // .filter((q) =>
+        //   q.gte(q.field("dueDate"), new Date().setHours(0, 0, 0, 0))
+        // )
+
         .collect();
 
       const groupedTodos = (await todos).reduce<any>((acc, todo) => {
