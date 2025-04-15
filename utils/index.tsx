@@ -3,23 +3,23 @@ import { Calendar, CalendarDays, Grid2X2, Inbox } from "lucide-react";
 export const primaryNavItems = [
   {
     id: "primary",
-    name: "Inbox",
+    name: "Buzon",
     link: "/loggedin",
     icon: <Inbox className="w-4 h-4" />,
   },
   {
-    name: "Today",
+    name: "Hoy",
     link: "/loggedin/today",
     icon: <Calendar className="w-4 h-4" />,
   },
   {
-    name: "Upcoming",
+    name: "Proximos",
     link: "/loggedin/upcoming",
     icon: <CalendarDays className="w-4 h-4" />,
   },
   {
     id: "filters",
-    name: "Filters & Labels",
+    name: "Filtros y etiquetas",
     link: "/loggedin/filter-labels",
     icon: <Grid2X2 className="w-4 h-4" />,
   },

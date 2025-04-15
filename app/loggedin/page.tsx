@@ -9,7 +9,7 @@ export default function LoggedIn() {
       <SideBar />
       <div className="flex flex-col">
         <MobileNav />
-        <main className="flex flex-1 flex-col g-4 p-4 lg:px-8">
+        <main className="flex flex-1 flex-col gap-4 p-4 lg:px-8">
           <TodoList />
         </main>
       </div>
