@@ -47,11 +47,11 @@ export default function ProjectIdPage() {
           </div>
 
           <Todos items={getComppletedTodosByProjectId} />
-
-          <CompletedTodos totalTodos={projectsTodoTotal} />
+          <div className="flex items-center space-x-4 gap-2 border-b-2 border-gray-100 p-2 text-sm text-foreground/80">
+            <CompletedTodos totalTodos={projectsTodoTotal} />
+          </div>
         </main>
       </div>
     </div>
   );
 }
-4:50:35
