@@ -40,3 +40,22 @@ export const getProjectByProjectId = query({
     return null;
   },
 });
+
+export const getProjectNameByProjectId = query({
+  args: {
+    projectId: v.id("projects"),
+  },
+  handler: async (ctx, { projectId }) => {
+    const userId = await handleUserId(ctx);
+    if (userId) {
+      const project = await ctx.db
+        .query("projects")
+        .filter((q) => q.eq(q.field("_id"), projectId))
+        .collect();
+
+      return project?.[0]?.name || "no hay nombre";
+    }
+
+    return null;
+  },
+});

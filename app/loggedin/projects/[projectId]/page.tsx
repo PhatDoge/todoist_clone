@@ -1,0 +1,57 @@
+"use client";
+
+import { AddTaskWrapper } from "@/components/add-tasks/add-task-button";
+import MobileNav from "@/components/nav/mobile-nav";
+import SideBar from "@/components/nav/side-bar";
+import { CompletedTodos } from "@/components/todos/completed-todos";
+import Todos from "@/components/todos/todos";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useQuery } from "convex/react";
+import { useParams } from "next/navigation";
+
+export default function ProjectIdPage() {
+  const { projectId } = useParams<{ projectId: Id<"projects"> }>();
+
+  const getComppletedTodosByProjectId =
+    useQuery(api.todos.getCompletedTodosByProjectId, {
+      projectId,
+    }) ?? [];
+
+  const getInCompletedTodosByProjectId =
+    useQuery(api.todos.getInCompletedTodosByProjectId, {
+      projectId,
+    }) ?? [];
+
+  const projectName = useQuery(api.projects.getProjectNameByProjectId, {
+    projectId,
+  });
+
+  const projectsTodoTotal = useQuery(api.todos.getTodosTotalByProjectId, {
+    projectId,
+  });
+
+  return (
+    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+      <SideBar />
+      <div className="flex flex-col">
+        <MobileNav />
+        <main className="flex flex-1 flex-col gap-4 p-4 lg:px-8">
+          <div className="flex items-center justify-between">
+            <h1 className="text-lg font-semibold md:text-2xl">{projectName}</h1>
+          </div>
+          <Todos items={getInCompletedTodosByProjectId} />
+
+          <div className="pb-6">
+            <AddTaskWrapper />
+          </div>
+
+          <Todos items={getComppletedTodosByProjectId} />
+
+          <CompletedTodos totalTodos={projectsTodoTotal} />
+        </main>
+      </div>
+    </div>
+  );
+}
+4:50:35
