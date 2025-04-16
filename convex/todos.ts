@@ -244,3 +244,20 @@ export const getTodosTotalByProjectId = query({
     return [];
   },
 });
+
+export const getTodosByProjectId = query({
+  args: {
+    projectId: v.id("projects"),
+  },
+  handler: async (ctx, { projectId }) => {
+    const userId = await handleUserId(ctx);
+    if (userId) {
+      return await ctx.db
+        .query("todos")
+        .filter((q) => q.eq(q.field("userId"), userId))
+        .filter((q) => q.eq(q.field("projectId"), projectId))
+        .collect();
+    }
+    return [];
+  },
+});

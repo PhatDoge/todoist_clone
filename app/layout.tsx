@@ -9,7 +9,7 @@ const defaultFont = Noto_Sans_Georgian({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Todovex.ai",
   description:
-    "TodoVex seamlessly organizes your tasks and predicts what's nextusing AI.",
+    "TodoVex organiza tus tareas de manera sencilla y predice lo que viene a continuacion utilizando IA.",
   icons: {
     icon: "/icon.ico",
   },

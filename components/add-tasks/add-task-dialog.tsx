@@ -27,10 +27,12 @@ export const AddTaskDialog = ({ data }: { data: Doc<"todos"> }) => {
   });
 
   const incompletedSubtodosByProject =
-    useQuery(api.subTodos.inCompletedSubTodos) ?? [];
+    useQuery(api.subTodos.inCompletedSubTodos, {
+      parentId: _id,
+    }) ?? [];
 
   const completedSubtodosByProject =
-    useQuery(api.subTodos.completedSubTodos) ?? [];
+    useQuery(api.subTodos.completedSubTodos, { parentId: _id }) ?? [];
 
   const checkASubTodoMutation = useMutation(api.subTodos.checkASubTodo);
 
