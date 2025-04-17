@@ -33,7 +33,7 @@ export default function SearchForm() {
                     id="searchText"
                     type="search"
                     required
-                    placeholder="Search tasks..."
+                    placeholder="Buscar Tareas..."
                     className="w-full appearance-none bg-background pl-8 shadow-none h-10"
                     {...field}
                   />
