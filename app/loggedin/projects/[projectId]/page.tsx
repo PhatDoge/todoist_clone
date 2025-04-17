@@ -5,11 +5,13 @@ import SuggestMissingTask from "@/components/add-tasks/suggest-task";
 
 import MobileNav from "@/components/nav/mobile-nav";
 import SideBar from "@/components/nav/side-bar";
+import DeleteProject from "@/components/projects/delete-project";
 import { CompletedTodos } from "@/components/todos/completed-todos";
 import Todos from "@/components/todos/todos";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
+import { Trash2Icon } from "lucide-react";
 import { useParams } from "next/navigation";
 
 export default function ProjectIdPage() {
@@ -43,6 +45,13 @@ export default function ProjectIdPage() {
             <h1 className="text-lg font-semibold md:text-2xl">{projectName}</h1>
             <div className="flex gap-6 lg:gap-12 items-center">
               <SuggestMissingTask projectId={projectId} />
+
+              <DeleteProject
+                projectId={projectId}
+                trigger={
+                  <Trash2Icon className="w-6 h-6 text-red-500 cursor-pointer" />
+                }
+              />
             </div>
           </div>
 

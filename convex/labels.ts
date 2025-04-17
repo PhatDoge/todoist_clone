@@ -12,7 +12,10 @@ export const getLabels = query({
         .filter((q) => q.eq(q.field("userId"), userId))
         .collect();
 
-      const systemLabels = await ctx.db.query("labels").collect();
+      const systemLabels = await ctx.db
+        .query("labels")
+        .filter((q) => q.eq(q.field("type"), "system"))
+        .collect();
 
       return [...systemLabels, ...userLabels];
     }
@@ -37,5 +40,41 @@ export const getLabelByLabelId = query({
     }
 
     return null;
+  },
+});
+
+export const createALabel = mutation({
+  args: {
+    name: v.string(),
+  },
+  handler: async (ctx, { name }) => {
+    try {
+      const userId = await handleUserId(ctx);
+      if (!userId) return null;
+
+      // Check for existing label
+      const existing = await ctx.db
+        .query("labels")
+        .filter((q) =>
+          q.and(q.eq(q.field("userId"), userId), q.eq(q.field("name"), name))
+        )
+        .first();
+
+      if (existing) {
+        console.log("Label already exists");
+        return existing._id; // or return null
+      }
+
+      const newLabelId = await ctx.db.insert("labels", {
+        userId,
+        name,
+        type: "user",
+      });
+
+      return newLabelId;
+    } catch (err) {
+      console.log("Error occurred during createALabel mutation", err);
+      return null;
+    }
   },
 });

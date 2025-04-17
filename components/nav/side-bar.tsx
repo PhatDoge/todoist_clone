@@ -20,6 +20,7 @@ import { Hash, PlusIcon } from "lucide-react";
 import { Doc } from "@/convex/_generated/dataModel";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import AddProjectDialog from "../projects/add-project-dialog";
+import AddLabelDialog from "../labels/add-label-dialog";
 // import AddProjectDialog from "../projects/add-project-dialog";
 // import AddLabelDialog from "../labels/add-label-dialog";
 
@@ -114,7 +115,7 @@ export default function SideBar() {
                           aria-label="Add a Label"
                         />
                       </DialogTrigger>
-                      {/* <AddLabelDialog /> */}
+                      <AddLabelDialog />
                     </Dialog>
                   )}
                 </div>
