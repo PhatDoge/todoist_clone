@@ -16,7 +16,7 @@ export default function SuggestMissingTask({
   isSubTask?: boolean;
   taskName?: string;
   description?: string;
-  parentId?: Id<"todos">;
+  parentId: Id<"todos">;
 }) {
   const [isLoadingSuggestMissingTasks, setIsLoadingSuggestMissingTasks] =
     useState(false);
