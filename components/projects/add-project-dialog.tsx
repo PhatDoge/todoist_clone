@@ -42,7 +42,7 @@ function AddProjectDialogContent() {
 
     if (projectId !== undefined) {
       toast({
-        title: "🚀 Successfully created a project!",
+        title: "🚀 Creaste un projecto!",
         duration: 3000,
       });
       form.reset({ name: "" });
@@ -68,7 +68,7 @@ function AddProjectDialogContent() {
                       <Input
                         id="name"
                         type="text"
-                        placeholder="Project name"
+                        placeholder="Nombre del proyecto"
                         required
                         className="border-0 font-semibold text-lg"
                         {...field}
@@ -77,7 +77,7 @@ function AddProjectDialogContent() {
                   </FormItem>
                 )}
               ></FormField>
-              <Button className="">Add</Button>
+              <Button className="">Crear</Button>
             </form>
           </Form>
         </DialogDescription>

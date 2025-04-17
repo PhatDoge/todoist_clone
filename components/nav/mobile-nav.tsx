@@ -1,22 +1,20 @@
-import { Menu } from "lucide-react";
+"use client";
+
+import { Hash, Menu } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import Image from "next/image";
-// import SearchForm from "./search-form";
-
 import todovexLogo from "@/public/logo/todovex.svg";
 import { primaryNavItems } from "@/utils";
 import SearchForm from "./search-form";
 import UserProfile from "./user-profile";
+
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
 
 export default function MobileNav({
   navTitle = "",
@@ -25,50 +23,55 @@ export default function MobileNav({
   navTitle?: string;
   navLink?: string;
 }) {
+  const pathname = usePathname();
+
+  const projectList = useQuery(api.projects.getProjects);
+  const [navItems, setNavItems] = useState([...primaryNavItems]);
+
+  useEffect(() => {
+    if (projectList) {
+      const projectItems = projectList.map(({ _id, name }, idx) => ({
+        ...(idx === 0 && { id: "projects" }),
+        name,
+        link: `/loggedin/projects/${_id.toString()}`,
+        icon: <Hash className="w-4 h-4" />,
+      }));
+      setNavItems([...primaryNavItems, ...projectItems]);
+    }
+  }, [projectList]);
+
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="shrink-0 md:hidden">
             <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle navigation menu</span>
+            <span className="sr-only">Activar navegación móvil</span>
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col">
           <nav className="grid gap-2 text-lg font-medium">
             <UserProfile />
 
-            {primaryNavItems.map(({ name, icon, link }, idx) => (
-              <Link
-                key={idx}
-                href={link}
-                className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2  hover:text-foreground"
-              >
-                {icon}
-                {name}
-              </Link>
+            {navItems.map(({ name, icon, link, id }, idx) => (
+              <div key={idx}>
+                {id === "projects" && (
+                  <div className="flex items-center mt-6 mb-2">
+                    <p className="flex flex-1 text-base">Mis proyectos</p>
+                  </div>
+                )}
+                <Link
+                  href={link}
+                  className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 hover:text-foreground ${
+                    pathname === link ? "text-primary font-semibold" : ""
+                  }`}
+                >
+                  {icon}
+                  {name}
+                </Link>
+              </div>
             ))}
-
-            <div className="flex items-center mt-6 mb-2">
-              <p className="flex flex-1 text-base">Mis proyectos</p>
-            </div>
           </nav>
-          <div className="mt-auto">
-            <Card>
-              <CardHeader>
-                <CardTitle>Upgrade to Pro</CardTitle>
-                <CardDescription>
-                  Unlock all features and get unlimited access to our support
-                  team.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button size="sm" className="w-full">
-                  Upgrade
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
         </SheetContent>
       </Sheet>
       <div className="flex items-center md:justify-between w-full gap-1 md:gap-2 py-2">
