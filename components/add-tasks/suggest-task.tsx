@@ -16,7 +16,7 @@ export default function SuggestMissingTask({
   isSubTask?: boolean;
   taskName?: string;
   description?: string;
-  parentId?: Id<"todos">;
+  parentId: Id<"todos">;
 }) {
   const [isLoadingSuggestMissingTasks, setIsLoadingSuggestMissingTasks] =
     useState(false);
@@ -24,8 +24,8 @@ export default function SuggestMissingTask({
   const suggestMissingTasks =
     useAction(api.openai.suggestMissingItemsWithAi) || [];
 
-  // const suggestMissingSubTasks =
-  //   useAction(api.openai.suggestMissingSubItemsWithAi) || [];
+  const suggestMissingSubTasks =
+    useAction(api.openai.suggestMissingSubItemsWithAi) || [];
 
   const handleMissingTasks = async () => {
     setIsLoadingSuggestMissingTasks(true);

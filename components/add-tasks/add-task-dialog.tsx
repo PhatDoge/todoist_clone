@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from "react";
+import { api } from "@/convex/_generated/api";
+import { Doc } from "@/convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import { format } from "date-fns";
+import { Calendar, ChevronDown, Flag, Hash, Tag } from "lucide-react";
+import { useEffect, useState } from "react";
+import Task from "../todos/task";
 import {
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
-import { Doc } from "@/convex/_generated/dataModel";
 import { Label } from "../ui/label";
-import { Calendar, ChevronDown, Flag, Hash, Tag } from "lucide-react";
-import { format } from "date-fns";
-import { useMutation, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { Button } from "../ui/button";
-import Task from "../todos/task";
 import { AddTaskWrapper } from "./add-task-button";
+import SuggestMissingTask from "./suggest-task";
 
 export const AddTaskDialog = ({ data }: { data: Doc<"todos"> }) => {
   const { _id, taskName, description, dueDate, priority, projectId, labelId } =
@@ -25,6 +24,7 @@ export const AddTaskDialog = ({ data }: { data: Doc<"todos"> }) => {
   const label = useQuery(api.labels.getLabelByLabelId, {
     labelId,
   });
+  const getSubTodo = useQuery(api.subTodos.get);
 
   const incompletedSubtodosByProject =
     useQuery(api.subTodos.inCompletedSubTodos, {
@@ -33,6 +33,9 @@ export const AddTaskDialog = ({ data }: { data: Doc<"todos"> }) => {
 
   const completedSubtodosByProject =
     useQuery(api.subTodos.completedSubTodos, { parentId: _id }) ?? [];
+
+  const [selectedSubtask, setSelectedSubtask] =
+    useState<Doc<"subTodos"> | null>(null);
 
   const checkASubTodoMutation = useMutation(api.subTodos.checkASubTodo);
 
@@ -68,11 +71,16 @@ export const AddTaskDialog = ({ data }: { data: Doc<"todos"> }) => {
         value: label?.name,
         icon: <Tag className="w-4 h-4 text-primary capitalize" />,
       },
+      {
+        labelName: "Descripción",
+        value: description,
+
+        icon: <Tag className="w-4 h-4 text-primary" />,
+      },
     ];
 
     setTodoDetails(data);
   }, [project, label?.name, priority, dueDate]);
-
   return (
     <DialogContent className="max-w-4xl lg:h-4/6 flex flex-col md:flex-row lg:justify-between text-right">
       <DialogHeader className="w-full">
@@ -86,7 +94,13 @@ export const AddTaskDialog = ({ data }: { data: Doc<"todos"> }) => {
               <p className="font-bold flex text-sm text-gray-900">Sub Tareas</p>
             </div>
             <div>
-              <Button variant={"outline"}>Suguiere con IA</Button>
+              <SuggestMissingTask
+                projectId={projectId}
+                taskName={taskName}
+                description={description}
+                parentId={_id}
+                isSubTask={true}
+              />
             </div>
           </div>
 

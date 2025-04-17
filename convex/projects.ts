@@ -15,7 +15,15 @@ export const getProjects = query({
 
       const systemProjects = await ctx.db.query("projects").collect();
 
-      return [...userProjects, ...systemProjects];
+      const combined = [...userProjects];
+
+      for (const project of systemProjects) {
+        if (!combined.some((p) => p._id === project._id)) {
+          combined.push(project);
+        }
+      }
+
+      return combined;
     }
 
     return [];
@@ -57,5 +65,30 @@ export const getProjectNameByProjectId = query({
     }
 
     return null;
+  },
+});
+
+export const createAProject = mutation({
+  args: {
+    name: v.string(),
+  },
+  handler: async (ctx, { name }) => {
+    try {
+      const userId = await handleUserId(ctx);
+      if (userId) {
+        const newTaskId = await ctx.db.insert("projects", {
+          userId,
+          name,
+          type: "user",
+        });
+        return newTaskId;
+      }
+
+      return null;
+    } catch (err) {
+      console.log("Error occurred during createAProject mutation", err);
+
+      return null;
+    }
   },
 });

@@ -16,6 +16,24 @@ export const get = query({
   },
 });
 
+export const getSubtodoDescriptionById = query({
+  args: {
+    parentId: v.id("todos"),
+  },
+  handler: async (ctx, { parentId }) => {
+    const userId = await handleUserId(ctx);
+    if (userId) {
+      return await ctx.db
+        .query("subTodos")
+        .filter((q) => q.eq(q.field("userId"), userId))
+        .filter((q) => q.eq(q.field("parentId"), parentId))
+
+        .collect();
+    }
+    return [];
+  },
+});
+
 export const createASubTodo = mutation({
   args: {
     taskName: v.string(),
@@ -121,6 +139,23 @@ export const getSubTodosByParentId = query({
         .query("subTodos")
         .filter((q) => q.eq(q.field("userId"), userId))
         .filter((q) => q.eq(q.field("parentId"), parentId))
+        .collect();
+    }
+
+    return [];
+  },
+});
+
+export const getSubTodosByProjectId = query({
+  args: { projectId: v.id("projects") },
+  handler: async (ctx, { projectId }) => {
+    const userId = await handleUserId(ctx);
+
+    if (userId) {
+      return await ctx.db
+        .query("subTodos")
+        .filter((q) => q.eq(q.field("userId"), userId))
+        .filter((q) => q.eq(q.field("projectId"), projectId))
         .collect();
     }
 

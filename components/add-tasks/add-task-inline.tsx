@@ -64,7 +64,7 @@ export const AddTaskInline = ({
   parentTask,
 }: {
   setShowAddTask: Dispatch<SetStateAction<boolean>>;
-  parentTask: Doc<"todos">;
+  parentTask?: Doc<"todos">;
 }) => {
   const projectId = parentTask?.projectId || "k978m8nh1dmc71d5nqxz213j057b1csk";
   const labelId = parentTask?.labelId || "k574jkhbtndbby2xcvmxrxbv1h7b01wd";

@@ -50,7 +50,7 @@ export default function MobileNav({
             ))}
 
             <div className="flex items-center mt-6 mb-2">
-              <p className="flex flex-1 text-base">My Projects</p>
+              <p className="flex flex-1 text-base">Mis proyectos</p>
             </div>
           </nav>
           <div className="mt-auto">
