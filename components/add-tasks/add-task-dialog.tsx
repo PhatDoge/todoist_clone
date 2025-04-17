@@ -27,12 +27,16 @@ export const AddTaskDialog = ({ data }: { data: Doc<"todos"> }) => {
   const getSubTodo = useQuery(api.subTodos.get);
 
   const incompletedSubtodosByProject =
-    useQuery(api.subTodos.inCompletedSubTodos, {
-      parentId: _id,
-    }) ?? [];
+    useQuery(
+      api.subTodos.inCompletedSubTodos,
+      _id ? { parentId: _id } : "skip"
+    ) ?? [];
 
   const completedSubtodosByProject =
-    useQuery(api.subTodos.completedSubTodos, { parentId: _id }) ?? [];
+    useQuery(
+      api.subTodos.completedSubTodos,
+      _id ? { parentId: _id } : "skip"
+    ) ?? [];
 
   const [selectedSubtask, setSelectedSubtask] =
     useState<Doc<"subTodos"> | null>(null);
