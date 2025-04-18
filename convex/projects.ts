@@ -51,6 +51,25 @@ export const getProjectByProjectId = query({
   },
 });
 
+// convex/projects.ts
+
+export const getProjectsByUser = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) return [];
+
+    const userId = identity.subject;
+
+    const projects = await ctx.db
+      .query("projects")
+      .filter((q) => q.eq(q.field("userId"), userId))
+      .collect();
+
+    return projects;
+  },
+});
+
 export const getProjectNameByProjectId = query({
   args: {
     projectId: v.id("projects"),

@@ -7,12 +7,12 @@ import { AddTaskDialog } from "../add-tasks/add-task-dialog";
 
 const Task = ({
   data,
-
   isCompleted,
   handleOnChange,
 }: {
   data: Doc<"todos"> | Doc<"subTodos">;
   isCompleted: boolean;
+  taskName: string;
 
   handleOnChange: () => void;
 }) => {

@@ -30,8 +30,8 @@ export default function AddLabelDialog() {
       const labelId: Id<"labels"> | null = await addLabelMutation({ name });
 
       if (labelId != undefined) {
-        router.push(`/loggedin/filter-labels/${labelId}`);
-        // document.getElementById("closeDialog")?.click();
+        // router.push(`/loggedin/filter-labels/${labelId}`);
+        document.getElementById("closeDialog")?.click();
 
         toast({
           title: "😎 Successfully created a Label!",

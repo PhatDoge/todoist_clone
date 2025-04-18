@@ -72,7 +72,7 @@ export const AddTaskInline = ({
   const parentId = parentTask?._id;
 
   const labels = useQuery(api.labels.getLabels) ?? [];
-  const projects = useQuery(api.projects.getProjects) ?? [];
+  const projects = useQuery(api.projects.getProjectsByUser) ?? [];
 
   const createATodoMutation = useMutation(api.todos.createATodo);
   const createASubTodoMutation = useMutation(api.subTodos.createASubTodo);

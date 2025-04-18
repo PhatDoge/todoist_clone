@@ -1,6 +1,6 @@
 "use client";
 
-import { Hash, Menu } from "lucide-react";
+import { Hash, Menu, PlusIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -8,10 +8,14 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+
 import todovexLogo from "@/public/logo/todovex.svg";
 import { primaryNavItems } from "@/utils";
 import SearchForm from "./search-form";
 import UserProfile from "./user-profile";
+import AddLabelDialog from "../labels/add-label-dialog";
+import AddProjectDialog from "../projects/add-project-dialog";
 
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
@@ -24,7 +28,6 @@ export default function MobileNav({
   navLink?: string;
 }) {
   const pathname = usePathname();
-
   const projectList = useQuery(api.projects.getProjects);
   const [navItems, setNavItems] = useState([...primaryNavItems]);
 
@@ -49,17 +52,43 @@ export default function MobileNav({
             <span className="sr-only">Activar navegación móvil</span>
           </Button>
         </SheetTrigger>
+
         <SheetContent side="left" className="flex flex-col">
           <nav className="grid gap-2 text-lg font-medium">
             <UserProfile />
 
             {navItems.map(({ name, icon, link, id }, idx) => (
               <div key={idx}>
-                {id === "projects" && (
-                  <div className="flex items-center mt-6 mb-2">
-                    <p className="flex flex-1 text-base">Mis proyectos</p>
+                {/* Label section */}
+                {id === "filters" && (
+                  <div className="flex items-center justify-between mt-6 mb-2 px-3">
+                    <p className="text-base">Filtros y etiquetas</p>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <PlusIcon
+                            className="h-5 w-5"
+                            aria-label="Add a Label"
+                          />
+                        </Button>
+                      </DialogTrigger>
+                      <AddLabelDialog />
+                    </Dialog>
                   </div>
                 )}
+
+                {/* Project section header */}
+                {id === "projects" && (
+                  <div className="flex items-center justify-between mt-6 mb-2 px-3">
+                    <p className="text-base">Mis proyectos</p>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <AddProjectDialog />
+                      </DialogTrigger>
+                    </Dialog>
+                  </div>
+                )}
+
                 <Link
                   href={link}
                   className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 hover:text-foreground ${
@@ -74,6 +103,7 @@ export default function MobileNav({
           </nav>
         </SheetContent>
       </Sheet>
+
       <div className="flex items-center md:justify-between w-full gap-1 md:gap-2 py-2">
         <div className="lg:flex-1">
           <Link href={navLink}>

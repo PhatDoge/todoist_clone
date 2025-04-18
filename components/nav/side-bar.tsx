@@ -1,6 +1,4 @@
 "use client";
-import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,54 +7,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { primaryNavItems } from "@/utils";
-import UserProfile from "./user-profile";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { api } from "@/convex/_generated/api";
+import { cn } from "@/lib/utils";
+import { primaryNavItems } from "@/utils";
 import { useQuery } from "convex/react";
-import { useEffect, useState } from "react";
 import { Hash, PlusIcon } from "lucide-react";
-import { Doc } from "@/convex/_generated/dataModel";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
-import AddProjectDialog from "../projects/add-project-dialog";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import AddLabelDialog from "../labels/add-label-dialog";
-// import AddProjectDialog from "../projects/add-project-dialog";
-// import AddLabelDialog from "../labels/add-label-dialog";
-
-interface MyListTitleType {
-  [key: string]: string;
-}
+import AddProjectDialog from "../projects/add-project-dialog";
+import { Dialog, DialogTrigger } from "../ui/dialog";
+import UserProfile from "./user-profile";
 
 export default function SideBar() {
   const pathname = usePathname();
-
-  const projectList = useQuery(api.projects.getProjects);
-
-  const LIST_OF_TITLE_IDS: MyListTitleType = {
-    primary: "",
-    projects: "Mis proyectos",
-  };
-
-  const [navItems, setNavItems] = useState([...primaryNavItems]);
-
-  const renderItems = (projectList: Array<Doc<"projects">>) => {
-    return projectList.map(({ _id, name }, idx) => {
-      return {
-        ...(idx === 0 && { id: "projects" }),
-        name,
-        link: `/loggedin/projects/${_id.toString()}`,
-        icon: <Hash className="w-4 h-4" />,
-      };
-    });
-  };
-  useEffect(() => {
-    if (projectList) {
-      const projectItems = renderItems(projectList);
-      const items = [...primaryNavItems, ...projectItems];
-      setNavItems(items);
-    }
-  }, [projectList]);
+  const projects = useQuery(api.projects.getProjectsByUser, {});
 
   return (
     <div className="hidden border-r bg-muted/40 md:block">
@@ -64,80 +29,87 @@ export default function SideBar() {
         <div className="flex justify-between h-14 items-center border-b p-1 lg:h-[60px] lg:px-2">
           <UserProfile />
         </div>
+
         <nav className="grid items-start px-1 text-sm font-medium lg:px-4">
-          {navItems.map(({ name, icon, link, id }, idx) => (
+          {/* Primary Navigation Items */}
+          {primaryNavItems.map(({ name, icon, link, id }, idx) => (
             <div key={idx}>
-              {id && (
-                <div
-                  className={cn(
-                    "flex items-center mt-6 mb-2",
-                    id === "filters" && "my-0"
-                  )}
-                >
-                  <p className="flex flex-1 text-base">
-                    {LIST_OF_TITLE_IDS[id]}
-                  </p>
-                  {LIST_OF_TITLE_IDS[id] === "Mis proyectos" && (
-                    <AddProjectDialog />
-                  )}
+              {/* Section Headers */}
+              {id === "filters" && (
+                <div className="flex items-center justify-between mt-6">
+                  <p className="text-base">Filtros y etiquetas</p>
+                  <Dialog>
+                    <DialogTrigger>
+                      <PlusIcon className="h-5 w-5" aria-label="Add a Label" />
+                    </DialogTrigger>
+                    <AddLabelDialog />
+                  </Dialog>
                 </div>
               )}
-              <div className={cn("flex items-center lg:w-full")}>
-                <div
-                  className={cn(
-                    "flex items-center text-left lg:gap-3 rounded-lg py-2 transition-all hover:text-primary justify-between w-full",
-                    pathname === link ?
-                      "active rounded-lg bg-primary/10 text-primary transition-all hover:text-primary"
-                    : "text-foreground "
-                  )}
-                >
-                  <Link
-                    key={idx}
-                    href={link}
-                    className={cn(
-                      "flex items-center text-left gap-3 rounded-lg transition-all hover:text-primary w-full"
-                    )}
-                  >
-                    <div className="flex gap-4 items-center w-full">
-                      <div className="flex gap-2 items-center">
-                        <p className="flex text-base text-left">
-                          {icon || <Hash />}
-                        </p>
-                        <p>{name}</p>
-                      </div>
-                    </div>
-                  </Link>
-                  {id === "filters" && (
-                    <Dialog>
-                      <DialogTrigger id="closeDialog">
-                        <PlusIcon
-                          className="h-5 w-5"
-                          aria-label="Add a Label"
-                        />
-                      </DialogTrigger>
-                      <AddLabelDialog />
-                    </Dialog>
-                  )}
-                </div>
-              </div>
+
+              {/* Navigation Links */}
+              <Link
+                href={link}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg py-2 transition-all hover:text-primary",
+                  pathname === link && "bg-primary/10 text-primary"
+                )}
+              >
+                <span className="flex gap-2 items-center">
+                  {icon}
+                  <p>{name}</p>
+                </span>
+              </Link>
             </div>
           ))}
+
+          {/* Fixed Projects Section */}
+          <div className="mt-6">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-base">Mis Proyectos</p>
+              <AddProjectDialog />
+            </div>
+
+            {/* Project List */}
+            {projects?.length ?
+              projects.map((project) => (
+                <Link
+                  key={project._id}
+                  href={`/loggedin/projects/${project._id}`}
+                  className={cn(
+                    "flex items-center gap-2 rounded-lg py-2 px-2 transition-all hover:text-primary",
+                    pathname === `/loggedin/projects/${project._id}` &&
+                      "bg-primary/10 text-primary"
+                  )}
+                >
+                  <Hash className="w-4 h-4" />
+                  <p>{project.name}</p>
+                </Link>
+              ))
+            : <p className="text-muted-foreground text-sm px-2">
+                No tienes proyectos aún.
+              </p>
+            }
+          </div>
         </nav>
-      </div>
-      <div className="mt-auto p-4">
-        <Card x-chunk="dashboard-02-chunk-0">
-          <CardHeader className="p-2 pt-0 md:p-4">
-            <CardTitle>Upgrade to Pro</CardTitle>
-            <CardDescription>
-              Unlock all features and get unlimited access to our support team.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-            <Button size="sm" className="w-full">
-              Upgrade
-            </Button>
-          </CardContent>
-        </Card>
+
+        {/* Upgrade Card */}
+        {/* <div className="mt-auto p-4">
+          <Card x-chunk="dashboard-02-chunk-0">
+            <CardHeader className="p-2 pt-0 md:p-4">
+              <CardTitle>Upgrade to Pro</CardTitle>
+              <CardDescription>
+                Unlock all features and get unlimited access to our support
+                team.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
+              <Button size="sm" className="w-full">
+                Upgrade
+              </Button>
+            </CardContent>
+          </Card>
+        </div> */}
       </div>
     </div>
   );
