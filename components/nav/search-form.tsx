@@ -21,7 +21,7 @@ export default function SearchForm() {
         className="lg:flex lg:items-center justify-end w-full"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <div className="relative flex gap-2 items-center w-full">
+        <div className="relative flex gap-2 items-center w-full ">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <FormField
             control={form.control}

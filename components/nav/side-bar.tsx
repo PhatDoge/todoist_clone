@@ -21,7 +21,7 @@ import UserProfile from "./user-profile";
 
 export default function SideBar() {
   const pathname = usePathname();
-  const projects = useQuery(api.projects.getProjectsByUser, {});
+  const projects = useQuery(api.projects.getProjectsByUser);
 
   return (
     <div className="hidden border-r bg-muted/40 md:block">
@@ -66,7 +66,13 @@ export default function SideBar() {
           {/* Fixed Projects Section */}
           <div className="mt-6">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-base">Mis Proyectos</p>
+              <Link
+                href="/loggedin/projects"
+                className="flex items-center gap-3 rounded-lg py-2 transition-all hover:text-primary"
+              >
+                <p className="text-base">Proyectos</p>
+              </Link>
+
               <AddProjectDialog />
             </div>
 

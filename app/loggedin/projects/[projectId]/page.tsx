@@ -39,7 +39,7 @@ export default function ProjectIdPage() {
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <SideBar />
       <div className="flex flex-col">
-        <MobileNav />
+        <MobileNav navTitle={"Mis proyectos"} navLink="/loggedin/projects" />
         <main className="flex flex-1 flex-col gap-4 p-4 lg:px-8">
           <div className="flex items-center justify-between flex-wrap gap-2 lg:gap-0">
             <h1 className="text-lg font-semibold md:text-2xl">{projectName}</h1>

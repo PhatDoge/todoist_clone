@@ -28,7 +28,7 @@ export default function MobileNav({
   navLink?: string;
 }) {
   const pathname = usePathname();
-  const projectList = useQuery(api.projects.getProjects);
+  const projectList = useQuery(api.projects.getProjectsByUser);
   const [navItems, setNavItems] = useState([...primaryNavItems]);
 
   useEffect(() => {
@@ -112,7 +112,7 @@ export default function MobileNav({
             </p>
           </Link>
         </div>
-        <div className="place-content-center w-full flex-1">
+        <div className="place-content-center w-full flex-1 ">
           <SearchForm />
         </div>
         <div className="place-content-center w-12 h-12 lg:w-16 lg:h-20">

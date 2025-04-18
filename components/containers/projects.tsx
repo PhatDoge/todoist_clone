@@ -5,12 +5,12 @@ import Link from "next/link";
 import { Label } from "../ui/label";
 
 const ProjectList = () => {
-  const projects = useQuery(api.projects.getProjects);
+  const projects = useQuery(api.projects.getProjectsByUser);
 
   return (
     <div className="xl:px-40">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold md:text-2xl">Projectos</h1>
+        <h1 className="text-lg font-semibold md:text-2xl">Proyectos</h1>
       </div>
 
       <div className="flex flex-col gap-1 py-4">
