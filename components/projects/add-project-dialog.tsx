@@ -1,4 +1,5 @@
 "use client";
+
 import { PlusIcon } from "lucide-react";
 import {
   Dialog,
@@ -15,7 +16,7 @@ import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 export default function AddProjectDialog() {
   return (
@@ -30,25 +31,41 @@ export default function AddProjectDialog() {
 
 function AddProjectDialogContent() {
   const form = useForm({ defaultValues: { name: "" } });
-  const { toast } = useToast();
   const router = useRouter();
 
   const createAProject = useMutation(api.projects.createAProject);
 
   const onSubmit = async ({ name }: any) => {
-    console.log("submitted", { name });
-
-    const projectId = await createAProject({ name });
-
-    if (projectId !== undefined) {
-      toast({
-        title: "🚀 Creaste un projecto!",
+    if (!name || name.trim() === "") {
+      toast.error("⚠️ El nombre del proyecto no puede estar vacío.", {
         duration: 3000,
       });
-      form.reset({ name: "" });
-      router.push(`/loggedin/projects/${projectId}`);
+      return;
+    }
+
+    try {
+      const projectId = await createAProject({ name });
+
+      if (projectId) {
+        toast.success("🚀 Creaste un projecto!", {
+          duration: 3000,
+        });
+        form.reset({ name: "" });
+        router.push(`/loggedin/projects/${projectId}`);
+      } else {
+        toast.error("❌ No se pudo crear el proyecto. Intenta de nuevo.", {
+          duration: 3000,
+        });
+      }
+    } catch (error) {
+      toast.error("🚨 Ocurrió un error inesperado.", {
+        description: (error as Error).message,
+        duration: 4000,
+      });
+      console.error("Error creating project:", error);
     }
   };
+
   return (
     <DialogContent className="max-w-xl lg:h-56 flex flex-col md:flex-row lg:justify-between text-right">
       <DialogHeader className="w-full">
@@ -76,8 +93,8 @@ function AddProjectDialogContent() {
                     </FormControl>
                   </FormItem>
                 )}
-              ></FormField>
-              <Button className="">Crear</Button>
+              />
+              <Button>Crear</Button>
             </form>
           </Form>
         </DialogDescription>

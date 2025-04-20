@@ -1,3 +1,5 @@
+"use client";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -5,13 +7,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { api } from "@/convex/_generated/api";
-import { useAction, useMutation } from "convex/react";
+import { useAction } from "convex/react";
 import { EllipsisIcon, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Id } from "@/convex/_generated/dataModel";
 import { GET_STARTED_PROJECT_ID } from "@/utils";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 export default function DeleteProject({
   projectId,
@@ -20,29 +22,32 @@ export default function DeleteProject({
   projectId: Id<"projects">;
   trigger?: React.ReactNode;
 }) {
-  const form = useForm({ defaultValues: { name: "" } });
-  const { toast } = useToast();
+  const form = useForm();
   const router = useRouter();
 
   const deleteProject = useAction(api.projects.deleteProjectAndItsTasks);
 
   const onSubmit = async () => {
     if (projectId === GET_STARTED_PROJECT_ID) {
-      toast({
-        title: "🤗 Just a reminder",
-        description: "System projects are protected from deletion.",
+      toast.warning("🤗 Proyecto protegido", {
+        description: "Este proyecto del sistema no puede ser eliminado.",
         duration: 3000,
       });
-    } else {
-      const deleteTaskId = await deleteProject({ projectId });
+      return;
+    }
 
-      if (deleteTaskId !== undefined) {
-        toast({
-          title: "🗑️ Successfully deleted a project",
-          duration: 3000,
-        });
-        router.push(`/loggedin/projects`);
-      }
+    try {
+      await deleteProject({ projectId });
+
+      toast.success("🗑️ Proyecto eliminado exitosamente", {
+        duration: 3000,
+      });
+      router.push(`/loggedin/projects`);
+    } catch (error) {
+      toast.error("🚨 Error inesperado al eliminar el proyecto", {
+        description: (error as Error).message,
+        duration: 4000,
+      });
     }
   };
 
@@ -56,9 +61,9 @@ export default function DeleteProject({
       <DropdownMenuContent>
         <DropdownMenuLabel className="w-40 lg:w-56">
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <button type="submit" className="flex gap-2">
-              <Trash2 className="w-5 h-5 rotate-45 text-foreground/40" /> Borrar
-              proyecto
+            <button type="submit" className="flex gap-2 items-center">
+              <Trash2 className="w-5 h-5 rotate-45 text-foreground/40" />
+              Borrar proyecto
             </button>
           </form>
         </DropdownMenuLabel>

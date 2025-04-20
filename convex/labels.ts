@@ -78,3 +78,31 @@ export const createALabel = mutation({
     }
   },
 });
+
+//create delete a label
+export const deleteALabel = mutation({
+  args: {
+    labelId: v.id("labels"),
+  },
+  handler: async (ctx, { labelId }) => {
+    try {
+      const userId = await handleUserId(ctx);
+      if (!userId) throw new Error("Unauthorized");
+
+      const label = await ctx.db.get(labelId);
+
+      if (!label) throw new Error("Label not found");
+      if (label.type === "system")
+        throw new Error("Cannot delete a system label");
+      if (label.userId !== userId)
+        throw new Error("You do not have permission to delete this label");
+
+      await ctx.db.delete(labelId);
+
+      return labelId;
+    } catch (err) {
+      console.error("Error deleting label:", err);
+      return null;
+    }
+  },
+});

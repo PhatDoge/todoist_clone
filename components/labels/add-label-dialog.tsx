@@ -14,31 +14,50 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { useState } from "react";
 import { Loader } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 export default function AddLabelDialog() {
   const addLabelMutation = useMutation(api.labels.createALabel);
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
-  const { toast } = useToast();
-  const form = useForm();
+  const form = useForm({ defaultValues: { name: "" } });
 
   const onSubmit = async ({ name }: any) => {
-    if (name) {
-      setIsLoading(true);
-      const labelId: Id<"labels"> | null = await addLabelMutation({ name });
+    if (!name || name.trim() === "") {
+      toast.error("⚠️ El nombre de la etiqueta no puede estar vacío.", {
+        duration: 3000,
+      });
+      return;
+    }
 
-      if (labelId != undefined) {
-        // router.push(`/loggedin/filter-labels/${labelId}`);
+    try {
+      setIsLoading(true);
+
+      const labelId: Id<"labels"> | null | undefined = await addLabelMutation({
+        name,
+      });
+
+      if (labelId) {
+        toast.success("🏷️ Etiqueta creada con éxito!", { duration: 3000 });
+
+        form.reset({ name: "" });
         document.getElementById("closeDialog")?.click();
 
-        toast({
-          title: "😎 Successfully created a Label!",
-          duration: 5000,
+        // router.push(`/loggedin/filter-labels/${labelId}`);
+      } else {
+        toast.error("❌ No se pudo crear la etiqueta. Intenta de nuevo.", {
+          duration: 3000,
         });
-        setIsLoading(false);
       }
+    } catch (error) {
+      toast.error("🚨 Error inesperado al crear la etiqueta.", {
+        description: (error as Error).message,
+        duration: 4000,
+      });
+      console.error("Add label error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -69,11 +88,12 @@ export default function AddLabelDialog() {
                     </FormControl>
                   </FormItem>
                 )}
-              ></FormField>
-              <Button disabled={isLoading} className="">
+              />
+              <Button disabled={isLoading}>
                 {isLoading ?
-                  <div className="flex gap-2">
-                    <Loader className="h-5 w-5 text-primary" />
+                  <div className="flex gap-2 items-center">
+                    <Loader className="h-5 w-5 animate-spin" />
+                    Creando...
                   </div>
                 : "Crear"}
               </Button>

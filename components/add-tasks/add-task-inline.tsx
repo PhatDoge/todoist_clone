@@ -8,17 +8,16 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "../ui/textarea";
-import { CalendarIcon, Loader2, Text } from "lucide-react";
-import { Card, CardFooter } from "../ui/card";
-import { Dispatch, SetStateAction } from "react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -26,19 +25,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
-import { Calendar } from "../ui/calendar";
-import { Doc, Id } from "@/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import moment, { duration } from "moment";
+import { Doc, Id } from "@/convex/_generated/dataModel";
+import { cn } from "@/lib/utils";
+import { useAction, useQuery } from "convex/react";
+import { format } from "date-fns";
+import { CalendarIcon, Text } from "lucide-react";
+import moment from "moment";
+import { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
+import { Calendar } from "../ui/calendar";
+import { CardFooter } from "../ui/card";
+import { Textarea } from "../ui/textarea";
 
 const formSchema = z.object({
   taskName: z.string().min(2, {
@@ -74,8 +72,12 @@ export const AddTaskInline = ({
   const labels = useQuery(api.labels.getLabels) ?? [];
   const projects = useQuery(api.projects.getProjectsByUser) ?? [];
 
-  const createATodoMutation = useMutation(api.todos.createATodo);
-  const createASubTodoMutation = useMutation(api.subTodos.createASubTodo);
+  // const createATodoMutation = useMutation(api.todos.createATodo);
+  const createASubTodoAndEmbeddings = useAction(
+    api.subTodos.createSubTodoAndEmbeddings
+  );
+
+  const createTodoEmbeddings = useAction(api.todos.createTodoAndEmbeddings);
 
   const defaultValues = {
     taskName: "",
@@ -91,13 +93,13 @@ export const AddTaskInline = ({
     defaultValues,
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     const { taskName, description, priority, dueDate, projectId, labelId } =
       data;
 
     if (projectId) {
       if (parentId) {
-        const mutationID = createASubTodoMutation({
+        const mutationID = createASubTodoAndEmbeddings({
           parentId,
           taskName,
           description,
@@ -113,7 +115,7 @@ export const AddTaskInline = ({
           });
         }
       } else {
-        const mutationID = createATodoMutation({
+        const mutationID = createTodoEmbeddings({
           taskName,
           description,
           priority: parseInt(priority),
