@@ -16,7 +16,11 @@ import { useState } from "react";
 import { Loader } from "lucide-react";
 import { toast } from "sonner";
 
-export default function AddLabelDialog() {
+export default function AddLabelDialog({
+  onSuccess,
+}: {
+  onSuccess: () => void;
+}) {
   const addLabelMutation = useMutation(api.labels.createALabel);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -40,11 +44,8 @@ export default function AddLabelDialog() {
 
       if (labelId) {
         toast.success("🏷️ Etiqueta creada con éxito!", { duration: 3000 });
-
         form.reset({ name: "" });
-        document.getElementById("closeDialog")?.click();
-
-        // router.push(`/loggedin/filter-labels/${labelId}`);
+        onSuccess(); // ← close the dialog
       } else {
         toast.error("❌ No se pudo crear la etiqueta. Intenta de nuevo.", {
           duration: 3000,

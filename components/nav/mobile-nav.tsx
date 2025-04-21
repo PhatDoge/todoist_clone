@@ -30,6 +30,7 @@ export default function MobileNav({
   const pathname = usePathname();
   const projectList = useQuery(api.projects.getProjectsByUser);
   const [navItems, setNavItems] = useState([...primaryNavItems]);
+  const [isLabelDialogOpen, setIsLabelDialogOpen] = useState(false);
 
   useEffect(() => {
     if (projectList) {
@@ -63,7 +64,10 @@ export default function MobileNav({
                 {id === "filters" && (
                   <div className="flex items-center justify-between mt-6 mb-2 px-3">
                     <p className="text-base">Filtros y etiquetas</p>
-                    <Dialog>
+                    <Dialog
+                      open={isLabelDialogOpen}
+                      onOpenChange={setIsLabelDialogOpen}
+                    >
                       <DialogTrigger asChild>
                         <Button size="icon" variant="outline">
                           <PlusIcon
@@ -72,7 +76,9 @@ export default function MobileNav({
                           />
                         </Button>
                       </DialogTrigger>
-                      <AddLabelDialog />
+                      <AddLabelDialog
+                        onSuccess={() => setIsLabelDialogOpen(false)}
+                      />
                     </Dialog>
                   </div>
                 )}

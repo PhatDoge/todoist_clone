@@ -18,16 +18,18 @@ export const suggestMissingItemsWithAi = action({
     const todos = await ctx.runQuery(api.todos.getTodosByProjectId, {
       projectId,
     });
+    const trimmedTodos = todos.slice(0, 20); // adjust based on average token size
+    const taskList = trimmedTodos.map((t) => `- ${t.taskName}`).join("\n");
     const response = await openai.chat.completions.create({
       messages: [
         {
           role: "system",
           content:
-            "I'm a project manager and I need help identifying missing to-do items. I have a list of existing tasks in JSON format, containing objects with 'taskName' and 'description' properties. I also have a good understanding of the project scope. Can you help me identify 1 additional to-do items for the project with projectName that are not yet included in this list? Please provide these missing items in a separate JSON array with the key 'todos' containing objects with 'taskName' and 'description' properties. Ensure there are no duplicates between the existing list and the new suggestions. make sure to answer in the same lenguage as the todos are writen, its very important that you respect the original lenguage and give answers in the right lenguage.",
+            "I'm managing a project and need help finding one missing to-do. I have a list of tasks in JSON (taskName, description) and the project name: projectName Suggest 1 new to-do not already on the list. Return it as a JSON array under the todos key, using the same format.⚠️ Avoid duplicates 🗣️ Use the same language as the original to-dos",
         },
         {
           role: "user",
-          content: JSON.stringify(todos),
+          content: `Here are the current tasks:\n${taskList}\nWhat tasks are missing?`,
         },
       ],
       response_format: {
@@ -47,9 +49,11 @@ export const suggestMissingItemsWithAi = action({
       const items = JSON.parse(messageContent)?.todos ?? [];
 
       for (let i = 0; i < items.length; i++) {
-        const { taskName, description } = items[i];
         const AI_LABEL_ID = "k57at4b6x9a5r09wgd5ty5p23s7e51ec";
-
+        const { taskName, description } = items[i];
+        const embedding = await getEmbeddingsWithAI(
+          `${taskName} - ${description}`
+        );
         await ctx.runMutation(api.todos.createATodo, {
           taskName,
           description,
@@ -57,6 +61,7 @@ export const suggestMissingItemsWithAi = action({
           dueDate: new Date().getTime(),
           projectId,
           labelId: AI_LABEL_ID as Id<"labels">,
+          embedding,
         });
       }
     }
@@ -112,11 +117,11 @@ export const suggestMissingSubItemsWithAi = action({
     //create the todos
     if (messageContent) {
       const items = JSON.parse(messageContent)?.todos ?? [];
-      const AI_LABEL_ID = "k57at4b6x9a5r09wgd5ty5p23s7e51ec";
 
       for (let i = 0; i < items.length; i++) {
+        const AI_LABEL_ID = "k57at4b6x9a5r09wgd5ty5p23s7e51ec";
         const { taskName, description } = items[i];
-        // const embedding = await getEmbeddingsWithAI(taskName);
+        const embedding = await getEmbeddingsWithAI(taskName);
         await ctx.runMutation(api.subTodos.createASubTodo, {
           taskName,
           description,
@@ -125,7 +130,7 @@ export const suggestMissingSubItemsWithAi = action({
           projectId,
           parentId,
           labelId: AI_LABEL_ID as Id<"labels">,
-          // embedding,
+          embedding,
         });
       }
     }
@@ -133,12 +138,13 @@ export const suggestMissingSubItemsWithAi = action({
 });
 
 export const getEmbeddingsWithAI = async (searchText: string) => {
-  if (!apiKey) {
-    throw new Error("Open AI Key is not defined");
-  }
+  if (!apiKey) throw new Error("Open AI Key is not defined");
+
+  const cleanedText = searchText.trim();
+  if (!cleanedText) throw new Error("Search text is empty or whitespace");
 
   const req = {
-    input: searchText,
+    input: cleanedText,
     model: "text-embedding-ada-002",
     encoding_format: "float",
   };
@@ -160,7 +166,7 @@ export const getEmbeddingsWithAI = async (searchText: string) => {
   const json = await response.json();
   const vector = json["data"][0]["embedding"];
 
-  console.log(`Embedding of ${searchText}: , ${vector.length} dimensions`);
+  console.log(`Embedding of "${searchText}": ${vector.length} dimensions`);
 
   return vector;
 };

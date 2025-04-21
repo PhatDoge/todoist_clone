@@ -7,12 +7,18 @@ import { Form, FormControl, FormField, FormItem } from "../ui/form";
 import { Input } from "../ui/input";
 
 export default function SearchForm() {
-  const form = useForm();
+  const form = useForm({
+    defaultValues: {
+      searchText: "",
+    },
+  });
+
   const router = useRouter();
 
   const onSubmit = async ({ searchText }: any) => {
-    console.log("submitted", { searchText });
-    router.push(`/loggedin/search/${searchText}`);
+    const trimmed = searchText.trim();
+    if (!trimmed) return;
+    router.push(`/loggedin/search/${trimmed}`);
   };
 
   return (

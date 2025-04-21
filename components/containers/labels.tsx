@@ -1,113 +1,113 @@
 "use client";
 
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { api } from "@/convex/_generated/api";
+import { useMutation, useQuery } from "convex/react";
+import { Hash, Trash2Icon } from "lucide-react";
+import { Label } from "../ui/label";
+import { toast } from "sonner";
+import { Id } from "@/convex/_generated/dataModel";
 import {
+  Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { api } from "@/convex/_generated/api";
-import { useMutation } from "convex/react";
-import { useForm } from "react-hook-form";
+} from "../ui/dialog";
 import { Button } from "../ui/button";
-import { Form, FormControl, FormField, FormItem } from "../ui/form";
-import { Input } from "../ui/input";
-import { Loader } from "lucide-react";
-import { toast } from "sonner";
-import { useEffect, useState } from "react";
 
-// Add onClose prop type
-interface AddLabelDialogProps {
-  onClose: () => void;
-}
+const LabelList = () => {
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-export default function AddLabelDialog({ onClose }: AddLabelDialogProps) {
-  const addLabelMutation = useMutation(api.labels.createALabel);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const form = useForm({ defaultValues: { name: "" } });
-
-  // Close dialog when form is successfully submitted
-  useEffect(() => {
-    if (form.formState.isSubmitSuccessful) {
-      const timer = setTimeout(() => {
-        onClose();
-        form.reset();
-      }, 1000);
-      return () => clearTimeout(timer);
+  const labels = useQuery(api.labels.getLabels);
+  const deleteALabel = useMutation(
+    api.labels.deleteALabel
+  ).withOptimisticUpdate((localStore, { labelId }) => {
+    const currentLabels = localStore.getQuery(api.labels.getLabels, {});
+    if (currentLabels) {
+      localStore.setQuery(
+        api.labels.getLabels,
+        {},
+        currentLabels.filter((label) => label._id !== labelId)
+      );
     }
-  }, [form.formState.isSubmitSuccessful, onClose, form]);
+  });
 
-  const onSubmit = async ({ name }: { name: string }) => {
-    if (!name || name.trim() === "") {
-      toast.error("⚠️ El nombre de la etiqueta no puede estar vacío.", {
-        duration: 3000,
-      });
-      return;
-    }
+  const [deletingLabelId, setDeletingLabelId] = useState<Id<"labels"> | null>(
+    null
+  );
+
+  const handleConfirmDelete = async () => {
+    if (!deletingLabelId) return;
 
     try {
-      setIsLoading(true);
-      const labelId = await addLabelMutation({ name });
-
-      if (labelId) {
-        toast.success("🏷️ Etiqueta creada con éxito!", { duration: 3000 });
-      } else {
-        toast.error("❌ No se pudo crear la etiqueta. Intenta de nuevo.", {
-          duration: 3000,
-        });
-      }
+      await deleteALabel({ labelId: deletingLabelId });
+      toast.success("Etiqueta eliminada exitosamente");
     } catch (error) {
-      toast.error("🚨 Error inesperado al crear la etiqueta.", {
-        description: (error as Error).message,
-        duration: 4000,
-      });
-      console.error("Add label error:", error);
+      toast.error("Error al eliminar la etiqueta");
     } finally {
-      setIsLoading(false);
+      setDeletingLabelId(null);
     }
   };
 
   return (
-    <DialogContent className="max-w-xl lg:h-56 flex flex-col md:flex-row lg:justify-between text-right">
-      <DialogHeader className="w-full">
-        <DialogTitle>Agrega una nueva etiqueta</DialogTitle>
-        <DialogDescription className="capitalize">
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-2 border-2 p-6 border-gray-200 my-2 rounded-sm border-foreground/20"
+    <div className="xl:px-40">
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold md:text-2xl">Etiquetas</h1>
+      </div>
+
+      <div className="flex flex-col gap-1 py-4">
+        <AnimatePresence>
+          {labels?.map((label) => (
+            <motion.div
+              key={label._id}
+              initial={{ opacity: 1, height: "auto" }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center justify-between border-b-2 p-2 border-gray-100"
             >
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        id="name"
-                        type="text"
-                        placeholder="Nombre de la etiqueta"
-                        required
-                        className="border-0 font-semibold text-lg"
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
+              <div className="flex items-center space-x-2">
+                <Hash className="text-primary w-5 h-5" />
+                <Label className="hover:cursor-pointer text-base font-normal">
+                  {label.name}
+                </Label>
+              </div>
+              <Trash2Icon
+                className="w-4 h-4 text-primary hover:bg-primary hover:rounded-xl hover:text-white cursor-pointer"
+                onClick={() => setDeletingLabelId(label._id)}
               />
-              <Button disabled={isLoading} type="submit">
-                {isLoading ?
-                  <div className="flex gap-2 items-center">
-                    <Loader className="h-5 w-5 animate-spin" />
-                    Creando...
-                  </div>
-                : "Crear"}
-              </Button>
-            </form>
-          </Form>
-        </DialogDescription>
-      </DialogHeader>
-    </DialogContent>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+
+      <Dialog
+        open={!!deletingLabelId}
+        onOpenChange={(open) => !open && setDeletingLabelId(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Estás seguro?</DialogTitle>
+            <DialogDescription>
+              Esta acción no se puede deshacer. ¿Quieres eliminar esta etiqueta
+              permanentemente?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeletingLabelId(null)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmDelete}>
+              Eliminar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
-}
+};
+
+export default LabelList;
