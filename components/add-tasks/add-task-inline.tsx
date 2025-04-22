@@ -42,7 +42,7 @@ const formSchema = z.object({
   taskName: z.string().min(2, {
     message: "Tarea debe tener al menos 2 caracteres",
   }),
-  description: z.string().optional(),
+  description: z.string().optional().default(""),
   priority: z.string().min(1, {
     message: "Porfavor seleccione una prioridad",
   }),
