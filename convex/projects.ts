@@ -8,26 +8,19 @@ export const getProjects = query({
   args: {},
   handler: async (ctx) => {
     const userId = await handleUserId(ctx);
-
     if (userId) {
       const userProjects = await ctx.db
         .query("projects")
         .filter((q) => q.eq(q.field("userId"), userId))
         .collect();
 
-      const systemProjects = await ctx.db.query("projects").collect();
+      const systemProjects = await ctx.db
+        .query("projects")
+        .filter((q) => q.eq(q.field("type"), "system"))
+        .collect();
 
-      const combined = [...userProjects];
-
-      for (const project of systemProjects) {
-        if (!combined.some((p) => p._id === project._id)) {
-          combined.push(project);
-        }
-      }
-
-      return combined;
+      return [...systemProjects, ...userProjects];
     }
-
     return [];
   },
 });

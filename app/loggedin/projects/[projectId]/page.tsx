@@ -61,7 +61,7 @@ export default function ProjectIdPage() {
             <Todos items={getInCompletedTodosByProjectId} />
 
             <div className="pb-6">
-              <AddTaskWrapper />
+              <AddTaskWrapper projectId={projectId} />
             </div>
             <div className="flex gap-1 flex-col mt-4"></div>
             <Todos items={getComppletedTodosByProjectId} />

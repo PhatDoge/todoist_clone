@@ -1,17 +1,23 @@
 import { Plus } from "lucide-react";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { AddTaskInline } from "./add-task-inline";
-import { Doc } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 
 export const AddTaskWrapper = ({
   parentTask,
+  projectId,
 }: {
   parentTask?: Doc<"todos">;
+  projectId?: Id<"projects">;
 }) => {
   const [showAddTask, setShowAddTask] = useState(false);
 
   return showAddTask ?
-      <AddTaskInline setShowAddTask={setShowAddTask} parentTask={parentTask} />
+      <AddTaskInline
+        setShowAddTask={setShowAddTask}
+        projectId={projectId}
+        parentTask={parentTask}
+      />
     : <AddTaskButton
         onClick={() => setShowAddTask(true)}
         title={parentTask?._id ? "Subtarea" : "Tarea"}

@@ -60,12 +60,18 @@ const formSchema = z.object({
 export const AddTaskInline = ({
   setShowAddTask,
   parentTask,
+  projectId: MyprojectId,
 }: {
   setShowAddTask: Dispatch<SetStateAction<boolean>>;
   parentTask?: Doc<"todos">;
+  projectId?: Id<"projects">;
 }) => {
-  const projectId = parentTask?.projectId || "k978m8nh1dmc71d5nqxz213j057b1csk";
-  const labelId = parentTask?.labelId || "k574jkhbtndbby2xcvmxrxbv1h7b01wd";
+  const projectId =
+    MyprojectId ||
+    parentTask?.projectId ||
+    ("k978m8nh1dmc71d5nqxz213j057b1csk" as Id<"projects">);
+  const labelId =
+    parentTask?.labelId || ("k574jkhbtndbby2xcvmxrxbv1h7b01wd" as Id<"labels">);
   const priority = parentTask?.priority?.toString() || "1";
   const parentId = parentTask?._id;
 
@@ -135,7 +141,7 @@ export const AddTaskInline = ({
 
   return (
     <div>
-      {JSON.stringify(form.getValues(), null, 2)}
+      {/* {JSON.stringify(form.getValues(), null, 2)} */}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
