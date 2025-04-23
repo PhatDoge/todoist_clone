@@ -69,7 +69,7 @@ export const AddTaskInline = ({
   const projectId =
     MyprojectId ||
     parentTask?.projectId ||
-    ("k978m8nh1dmc71d5nqxz213j057b1csk" as Id<"projects">);
+    ("k97ea9zhgeddhgf6208c7q75ks7ekyjh" as Id<"projects">);
   const labelId =
     parentTask?.labelId || ("k574jkhbtndbby2xcvmxrxbv1h7b01wd" as Id<"labels">);
   const priority = parentTask?.priority?.toString() || "1";

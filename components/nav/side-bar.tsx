@@ -42,7 +42,7 @@ export default function SideBar() {
                     <DialogTrigger>
                       <PlusIcon className="h-5 w-5" aria-label="Add a Label" />
                     </DialogTrigger>
-                    <AddLabelDialog />
+                    <AddLabelDialog onSuccess={() => {}} />
                   </Dialog>
                 </div>
               )}

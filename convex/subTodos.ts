@@ -203,3 +203,10 @@ export const createSubTodoAndEmbeddings = action({
     });
   },
 });
+
+export const deleteASubTodo = mutation({
+  args: { taskId: v.id("subTodos") },
+  handler: async (ctx, { taskId }) => {
+    await ctx.db.delete(taskId);
+  },
+});
