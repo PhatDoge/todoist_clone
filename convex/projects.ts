@@ -138,24 +138,48 @@ export const deleteProjectAndItsTasks = action({
   },
   handler: async (ctx, { projectId }) => {
     try {
-      const allTasks = await ctx.runQuery(api.todos.getTodosByProjectId, {
+      // Get all todos for this project
+      const allTodos = await ctx.runQuery(api.todos.getTodosByProjectId, {
         projectId,
       });
 
-      const promises = Promise.allSettled(
-        allTasks.map(async (task: Doc<"todos">) =>
+      // Get all subtodos for this project
+      const allSubTodos = await ctx.runQuery(
+        api.subTodos.getSubTodosByProjectId,
+        {
+          projectId,
+        }
+      );
+
+      // Delete all subtodos first
+      const subTodoPromises = Promise.allSettled(
+        allSubTodos.map(async (subTask: Doc<"subTodos">) =>
+          ctx.runMutation(api.subTodos.deleteASubTodo, {
+            taskId: subTask._id,
+          })
+        )
+      );
+      await subTodoPromises;
+
+      // Delete all todos
+      const todoPromises = Promise.allSettled(
+        allTodos.map(async (task: Doc<"todos">) =>
           ctx.runMutation(api.todos.deleteATodo, {
             taskId: task._id,
           })
         )
       );
-      const statuses = await promises;
+      await todoPromises;
 
+      // Finally delete the project itself
       await ctx.runMutation(api.projects.deleteProject, {
         projectId,
       });
+
+      return { success: true };
     } catch (err) {
-      console.error("Error deleting tasks and projects", err);
+      console.error("Error deleting tasks, subtasks and project", err);
+      return { success: false, error: err };
     }
   },
 });

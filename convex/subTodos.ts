@@ -204,9 +204,22 @@ export const createSubTodoAndEmbeddings = action({
   },
 });
 
+// Add this to subTodos.ts
 export const deleteASubTodo = mutation({
-  args: { taskId: v.id("subTodos") },
+  args: {
+    taskId: v.id("subTodos"),
+  },
   handler: async (ctx, { taskId }) => {
-    await ctx.db.delete(taskId);
+    try {
+      const userId = await handleUserId(ctx);
+      if (userId) {
+        const deletedTaskId = await ctx.db.delete(taskId);
+        return deletedTaskId;
+      }
+      return null;
+    } catch (err) {
+      console.log("Error occurred during deleteASubTodo mutation", err);
+      return null;
+    }
   },
 });
