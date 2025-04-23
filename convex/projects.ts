@@ -183,3 +183,40 @@ export const deleteProjectAndItsTasks = action({
     }
   },
 });
+
+export const updateProject = mutation({
+  args: {
+    projectId: v.id("projects"),
+    name: v.string(),
+  },
+  handler: async (ctx, { projectId, name }) => {
+    try {
+      const userId = await handleUserId(ctx);
+
+      if (!userId) {
+        throw new Error("Unauthorized: User not authenticated");
+      }
+
+      // Verify the project exists and belongs to this user
+      const project = await ctx.db.get(projectId);
+
+      if (!project) {
+        throw new Error("Project not found");
+      }
+
+      if (project.userId !== userId && project.type !== "system") {
+        throw new Error("Unauthorized: Not your project");
+      }
+
+      // Update the project name
+      const updatedProjectId = await ctx.db.patch(projectId, {
+        name: name,
+      });
+
+      return updatedProjectId;
+    } catch (err) {
+      console.log("Error occurred during updateProject mutation", err);
+      throw err;
+    }
+  },
+});

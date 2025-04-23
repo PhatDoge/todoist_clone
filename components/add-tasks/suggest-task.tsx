@@ -68,7 +68,7 @@ export default function SuggestMissingTask({
             Loading Tasks (AI)
             <Loader className="h-5 w-5 text-primary" />
           </div>
-        : "Suggest Missing Tasks (AI) 💖"}
+        : "Sugerir Tareas con IA 💖"}
       </Button>
     </>
   );

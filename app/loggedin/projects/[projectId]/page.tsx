@@ -6,12 +6,13 @@ import SuggestMissingTask from "@/components/add-tasks/suggest-task";
 import MobileNav from "@/components/nav/mobile-nav";
 import SideBar from "@/components/nav/side-bar";
 import DeleteProject from "@/components/projects/delete-project";
+import UpdateProject from "@/components/projects/update-project-name";
 import { CompletedTodos } from "@/components/todos/completed-todos";
 import Todos from "@/components/todos/todos";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import { Trash2Icon } from "lucide-react";
+import { Clipboard, Loader2, Trash2Icon } from "lucide-react";
 import { useParams } from "next/navigation";
 
 export default function ProjectIdPage() {
@@ -44,7 +45,11 @@ export default function ProjectIdPage() {
           <div className="xl:px-40">
             <div className="flex items-center justify-between flex-wrap gap-2 lg:gap-0">
               <h1 className="text-lg font-semibold md:text-2xl">
-                {projectName || "Proyecto"}
+                {projectName || (
+                  <>
+                    <Loader2 className="animate-spin" />
+                  </>
+                )}
               </h1>
               <div className="flex gap-6 lg:gap-12 items-center">
                 <SuggestMissingTask projectId={projectId} />
@@ -55,6 +60,9 @@ export default function ProjectIdPage() {
                     <Trash2Icon className="w-6 h-6 text-red-500 cursor-pointer" />
                   }
                 />
+                {projectName && (
+                  <UpdateProject projectId={projectId} name={projectName} />
+                )}
               </div>
             </div>
 
