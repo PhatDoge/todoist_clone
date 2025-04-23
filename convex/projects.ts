@@ -4,10 +4,11 @@ import { handleUserId } from "./auth";
 import { api } from "./_generated/api";
 import { Doc } from "./_generated/dataModel";
 
-export const getProjects = query({
+export const getProjectsByUser = query({
   args: {},
   handler: async (ctx) => {
     const userId = await handleUserId(ctx);
+
     if (userId) {
       const userProjects = await ctx.db
         .query("projects")
@@ -19,6 +20,7 @@ export const getProjects = query({
         .filter((q) => q.eq(q.field("type"), "system"))
         .collect();
 
+      // Combine user projects and system projects without deduplication
       return [...systemProjects, ...userProjects];
     }
     return [];
@@ -46,22 +48,22 @@ export const getProjectByProjectId = query({
 
 // convex/projects.ts
 
-export const getProjectsByUser = query({
-  handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
+// export const getProjectsByUser = query({
+//   handler: async (ctx) => {
+//     const identity = await ctx.auth.getUserIdentity();
 
-    if (!identity) return [];
+//     if (!identity) return [];
 
-    const userId = identity.subject;
+//     const userId = identity.subject;
 
-    const projects = await ctx.db
-      .query("projects")
-      .filter((q) => q.eq(q.field("userId"), userId))
-      .collect();
+//     const projects = await ctx.db
+//       .query("projects")
+//       .filter((q) => q.eq(q.field("userId"), userId))
+//       .collect();
 
-    return projects;
-  },
-});
+//     return projects;
+//   },
+// });
 
 export const getProjectNameByProjectId = query({
   args: {
