@@ -10,6 +10,12 @@ import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import moment from "moment";
 
+function isSubTodo(
+  data: Doc<"todos"> | Doc<"subTodos">
+): data is Doc<"subTodos"> {
+  return "parentId" in data;
+}
+
 const Task = ({
   data,
   isCompleted,
@@ -25,19 +31,9 @@ const Task = ({
   const { taskName, dueDate, projectId } = data;
   const deleteASubTodoMutation = useMutation(api.subTodos.deleteASubTodo);
 
-  const isSubTask = "parentId" in data;
-
-  // Only query for subtodos if this is a parent task, not a subtask
-  const subtodosTotal =
-    !isSubTask ?
-      useQuery(api.subTodos.getSubTodosByParentId, {
-        parentId: data._id,
-      })
-    : null;
-
   const handleDeleteSubtodo = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent dialog from opening
-    if (isSubTask) {
+    if (isSubTodo(data)) {
       deleteASubTodoMutation({ taskId: data._id })
         .then(() => {
           toast.success("Subtarea eliminada exitosamente", {
@@ -86,7 +82,7 @@ const Task = ({
                     <div className="flex items-center justify-center gap-1">
                       <GitBranch className="w-3 h-3 text-foreground/70" />
                       <p className="text-xs text-foreground/70">
-                        {subtodosTotal?.length}
+                        {isSubTodo(data) && projectId?.length}
                       </p>
                     </div>
                     <div className="flex items-center justify-center gap-1">
@@ -102,7 +98,7 @@ const Task = ({
           </div>
 
           {/* Delete button for subtasks */}
-          {isSubTask && (
+          {isSubTodo(data) && (
             <button
               onClick={handleDeleteSubtodo}
               className="flex items-center justify-center w-6 h-6 hover:bg-red-100 rounded-full transition-colors duration-200 group"
@@ -112,7 +108,7 @@ const Task = ({
             </button>
           )}
 
-          {!isSubTask && <AddTaskDialog data={data} />}
+          {!isSubTodo(data) && <AddTaskDialog data={data} />}
         </div>
       </Dialog>
     </div>

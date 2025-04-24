@@ -245,7 +245,7 @@ export const getTodosTotalByProjectId = query({
         .collect();
       return todos?.length || 0;
     }
-    return [];
+    return 0;
   },
 });
 
