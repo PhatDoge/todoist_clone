@@ -1,12 +1,4 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
 import { primaryNavItems } from "@/utils";
@@ -14,6 +6,7 @@ import { useQuery } from "convex/react";
 import { Hash, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react"; // Added this import
 import AddLabelDialog from "../labels/add-label-dialog";
 import AddProjectDialog from "../projects/add-project-dialog";
 import { Dialog, DialogTrigger } from "../ui/dialog";
@@ -22,6 +15,7 @@ import UserProfile from "./user-profile";
 export default function SideBar() {
   const pathname = usePathname();
   const projects = useQuery(api.projects.getProjectsByUser);
+  const [isLabelDialogOpen, setIsLabelDialogOpen] = useState(false); // Added state for dialog
 
   return (
     <div className="hidden border-r bg-muted/40 md:block">
@@ -38,11 +32,19 @@ export default function SideBar() {
               {id === "filters" && (
                 <div className="flex items-center justify-between mt-6">
                   <p className="text-base">Filtros y etiquetas</p>
-                  <Dialog>
+                  <Dialog
+                    open={isLabelDialogOpen}
+                    onOpenChange={setIsLabelDialogOpen}
+                  >
                     <DialogTrigger>
                       <PlusIcon className="h-5 w-5" aria-label="Add a Label" />
                     </DialogTrigger>
-                    <AddLabelDialog onSuccess={() => {}} />
+                    <AddLabelDialog
+                      onSuccess={() => {
+                        // You can add any additional success logic here if needed
+                      }}
+                      onOpenChange={setIsLabelDialogOpen}
+                    />
                   </Dialog>
                 </div>
               )}

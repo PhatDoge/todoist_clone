@@ -4,7 +4,13 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner"; // Import sonner toast
 
-export default function Todos({ items }: { items: Array<Doc<"todos">> }) {
+export default function Todos({
+  items,
+  showDetails = false,
+}: {
+  showDetails?: boolean;
+  items: Array<Doc<"todos">>;
+}) {
   const checkATodo = useMutation(api.todos.checkATodo);
   const unCheckATodo = useMutation(api.todos.unCheckATodo);
 
@@ -28,6 +34,7 @@ export default function Todos({ items }: { items: Array<Doc<"todos">> }) {
       isCompleted={task.isCompleted}
       key={task._id}
       data={task}
+      showDetails={showDetails}
       handleOnChange={() => handleOnChangeTodo(task)}
     />
   ));

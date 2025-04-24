@@ -43,7 +43,7 @@ export default function Today() {
           <Dot />
           {moment(new Date()).format("dddd")}
         </p>
-        <Todos items={todayTodos} />
+        <Todos items={todayTodos} showDetails={true} />
       </div>
     </div>
   );

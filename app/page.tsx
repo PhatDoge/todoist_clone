@@ -38,7 +38,7 @@ export default function LoginForm() {
               rel="noreferrer"
               className="mb-6 cursor-pointer rounded-2xl border border-black px-4 py-1 text-xs text-slate-600 transition duration-300 ease-in-out hover:text-slate-700 sm:text-base text-center"
             >
-              Powered by{" "}
+              Diseñado con{" "}
               <a
                 className="font-bold"
                 target="_blank"
@@ -46,7 +46,7 @@ export default function LoginForm() {
               >
                 Convex{" "}
               </a>
-              and{" "}
+              y{" "}
               <a
                 className="font-bold"
                 target="_blank"
@@ -56,18 +56,17 @@ export default function LoginForm() {
               </a>
             </span>
             <h1 className="inline-block text-center text-4xl font-medium tracking-tighter text-dark lg:text-7xl">
-              An Open Source AI-Powered{" "}
-              <br className="hidden lg:inline-block" />
-              Todoist Clone
+              Un clon de Todoist <br className="hidden lg:inline-block" />
+              desarrollado con openAi
             </h1>
             <h2 className="mt-8 text-center text-xl font-light tracking-tight lg:text-3xl">
-              TodoVex seamlessly{" "}
-              <span className="font-bold px-1">organizes your tasks</span> and
+              TodoVex te permite{" "}
+              <span className="font-bold px-1">organizar tus tareas</span> y
               <br className="hidden lg:inline-block" />
-              <span className="font-bold px-1">predicts what&apos;s next</span>
-              using AI.
+              <span className="font-bold px-1">predecir las próximas</span>
+              usando IA
             </h2>
-            <div className="mt-12 flex flex-col gap-4">
+            <div className="mt-12 flex flex-col gap-4 justify-center">
               <form action={signInAction}>
                 <GetStartedButton />
               </form>
@@ -76,7 +75,8 @@ export default function LoginForm() {
                   className="text-xl text-center px-4 py-7 bg-transparent border-purple-500/50"
                   variant={"outline"}
                 >
-                  Star on Github ⭐️
+                  Ver en Github
+                  <StepForward />
                 </Button>
               </div>
             </div>
@@ -107,7 +107,7 @@ export default function LoginForm() {
       <div className="flex items-center justify-center">
         <footer className="bottom-0 container mx-auto my-5 flex flex-col items-center justify-between space-y-3 border-t space-x-4 px-3 pt-4 text-center sm:flex-row sm:pt-2 md:text-lg">
           <div>
-            Powered by{" "}
+            Desarrollado con{" "}
             <a
               href="https://convex.dev/c/todovex"
               target="_blank"
@@ -115,7 +115,7 @@ export default function LoginForm() {
             >
               Convex
             </a>
-            and
+            y
             <a
               href="https://www.openai.com/"
               target="_blank"
@@ -127,20 +127,8 @@ export default function LoginForm() {
           <div className="flex space-x-4 pb-4 sm:pb-0">
             <a
               className="group"
-              aria-label="Twitter"
-              href="https://twitter.com/kulkarniankita9"
-            >
-              <svg
-                aria-hidden="true"
-                className="h-6 w-6 fill-slate-500 group-hover:fill-blue-500"
-              >
-                <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0 0 22 5.92a8.19 8.19 0 0 1-2.357.646 4.118 4.118 0 0 0 1.804-2.27 8.224 8.224 0 0 1-2.605.996 4.107 4.107 0 0 0-6.993 3.743 11.65 11.65 0 0 1-8.457-4.287 4.106 4.106 0 0 0 1.27 5.477A4.073 4.073 0 0 1 2.8 9.713v.052a4.105 4.105 0 0 0 3.292 4.022 4.093 4.093 0 0 1-1.853.07 4.108 4.108 0 0 0 3.834 2.85A8.233 8.233 0 0 1 2 18.407a11.615 11.615 0 0 0 6.29 1.84"></path>
-              </svg>
-            </a>
-            <a
-              className="group"
               aria-label="GitHub"
-              href="https://github.com/kulkarniankita/todoist-clone"
+              href="https://github.com/PhatDoge/todoist_clone"
             >
               <svg
                 aria-hidden="true"
@@ -149,10 +137,10 @@ export default function LoginForm() {
                 <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"></path>
               </svg>
             </a>
-            <a
+            {/* <a
               className="group"
               aria-label="GitHub"
-              href="https://github.com/kulkarniankita/todoist-clone"
+              href="https://github.com/PhatDoge/todoist_clone"
             >
               <svg
                 viewBox="0 0 256 180"
@@ -168,7 +156,7 @@ export default function LoginForm() {
                   d="m102.421 128.06 66.328-38.418-66.328-38.418z"
                 />
               </svg>
-            </a>
+            </a> */}
           </div>
         </footer>
       </div>
@@ -190,7 +178,7 @@ function GetStartedButton() {
             <Loader className="w-5 h-5" />
           </span>
         : <>
-            Get Started
+            Empieza ya
             <StepForward />
           </>
         }
@@ -217,7 +205,7 @@ function GoogleSignInButton() {
           <span className="">
             <Loader className="w-5 h-5" />
           </span>
-        : "Sign in with Google"}
+        : "Entrar con Google"}
       </span>
     </button>
   );

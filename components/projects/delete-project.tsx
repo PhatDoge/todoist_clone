@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { api } from "@/convex/_generated/api";
-import { useAction } from "convex/react";
+import { useAction, useQuery } from "convex/react";
 import { EllipsisIcon, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -25,10 +25,16 @@ export default function DeleteProject({
   const form = useForm();
   const router = useRouter();
 
+  // Query to check if project is a system project
+  const isSystemProject = useQuery(api.projects.checkIfProjectIsSystem, {
+    projectId,
+  });
+
   const deleteProject = useAction(api.projects.deleteProjectAndItsTasks);
 
   const onSubmit = async () => {
-    if (projectId === GET_STARTED_PROJECT_ID) {
+    // If it's a system project, show warning and return
+    if (isSystemProject || projectId === GET_STARTED_PROJECT_ID) {
       toast.warning("🤗 Proyecto protegido", {
         description: "Este proyecto del sistema no puede ser eliminado.",
         duration: 3000,
@@ -50,6 +56,11 @@ export default function DeleteProject({
       });
     }
   };
+
+  // Don't render anything if this is a system project
+  if (isSystemProject === true) {
+    return null;
+  }
 
   return (
     <DropdownMenu>

@@ -31,6 +31,7 @@ export default function MobileNav({
   const projectList = useQuery(api.projects.getProjectsByUser);
   const [navItems, setNavItems] = useState([...primaryNavItems]);
   const [isLabelDialogOpen, setIsLabelDialogOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (projectList) {
@@ -77,7 +78,10 @@ export default function MobileNav({
                         </Button>
                       </DialogTrigger>
                       <AddLabelDialog
-                        onSuccess={() => setIsLabelDialogOpen(false)}
+                        onSuccess={() => {
+                          // You can add any additional success logic here if needed
+                        }}
+                        onOpenChange={setIsLabelDialogOpen}
                       />
                     </Dialog>
                   </div>

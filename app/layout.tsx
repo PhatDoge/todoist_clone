@@ -6,6 +6,11 @@ import { Toaster } from "@/components/ui/sonner";
 
 const defaultFont = Noto_Sans_Georgian({ subsets: ["latin"] });
 
+const ORIGIN_URL =
+  process.env.NODE === "production" ?
+    "https://todovexai.vercel.app"
+  : "http://localhost:3000";
+
 export const metadata: Metadata = {
   title: "Todovex.ai",
   description:
@@ -13,10 +18,10 @@ export const metadata: Metadata = {
   icons: {
     icon: "/icon.ico",
   },
-  // metadataBase: new URL(ORIGIN_URL),
-  // alternates: {
-  //   canonical: ORIGIN_URL,
-  // },
+  metadataBase: new URL(ORIGIN_URL),
+  alternates: {
+    canonical: ORIGIN_URL,
+  },
 };
 
 export default function RootLayout({

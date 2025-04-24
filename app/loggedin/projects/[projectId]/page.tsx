@@ -12,7 +12,7 @@ import Todos from "@/components/todos/todos";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import { Clipboard, Loader2, Trash2Icon } from "lucide-react";
+import { Loader2, Trash2Icon } from "lucide-react";
 import { useParams } from "next/navigation";
 
 export default function ProjectIdPage() {
@@ -36,6 +36,11 @@ export default function ProjectIdPage() {
     projectId,
   });
 
+  // Check if project is a system project
+  const isSystemProject = useQuery(api.projects.checkIfProjectIsSystem, {
+    projectId,
+  });
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <SideBar />
@@ -54,12 +59,16 @@ export default function ProjectIdPage() {
               <div className="flex gap-6 lg:gap-12 items-center">
                 <SuggestMissingTask projectId={projectId} />
 
-                <DeleteProject
-                  projectId={projectId}
-                  trigger={
-                    <Trash2Icon className="w-6 h-6 text-red-500 cursor-pointer" />
-                  }
-                />
+                {/* Only show delete button if it's not a system project */}
+                {isSystemProject === false && (
+                  <DeleteProject
+                    projectId={projectId}
+                    trigger={
+                      <Trash2Icon className="w-6 h-6 text-red-500 cursor-pointer" />
+                    }
+                  />
+                )}
+
                 {projectName && (
                   <UpdateProject projectId={projectId} name={projectName} />
                 )}

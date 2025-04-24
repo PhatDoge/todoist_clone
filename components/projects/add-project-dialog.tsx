@@ -74,27 +74,31 @@ function AddProjectDialogContent() {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-2 border-2 p-6 border-gray-200 my-2 rounded-sm border-foreground/20"
+              className="border-2 p-6 border-gray-200 my-2 rounded-sm border-foreground/20"
             >
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        id="name"
-                        type="text"
-                        placeholder="Nombre del proyecto"
-                        required
-                        className="border-0 font-semibold text-lg"
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <Button>Crear</Button>
+              <div className="flex items-center gap-3">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormControl>
+                        <Input
+                          id="name"
+                          type="text"
+                          placeholder="Nombre del proyecto"
+                          required
+                          className="border-0 font-semibold text-lg"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="h-9 px-4 text-sm">
+                  Crear
+                </Button>
+              </div>
             </form>
           </Form>
         </DialogDescription>

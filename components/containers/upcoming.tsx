@@ -32,7 +32,7 @@ export default function Upcoming() {
 
       <div className="flex flex-col gap-1 py-4">
         <p className="font-bold flex text-sm">Tareas vencidas</p>
-        <Todos items={overdueTodos} />
+        <Todos showDetails={true} items={overdueTodos} />
       </div>
 
       <div className="flex flex-col gap-1 py-4">
@@ -58,10 +58,10 @@ export default function Upcoming() {
               <ul>
                 <Todos items={groupedTodosByDate[dueDate]} />
               </ul>
-              <AddTaskWrapper />
             </div>
           );
         })}
+        <AddTaskWrapper />
       </div>
     </div>
   );

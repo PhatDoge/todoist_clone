@@ -2,7 +2,14 @@ import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { format } from "date-fns";
-import { Calendar, ChevronDown, Flag, Hash, Tag } from "lucide-react";
+import {
+  Calendar,
+  ChevronDown,
+  Flag,
+  Hash,
+  Tag,
+  Trash2Icon,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import Task from "../todos/task";
 import {
@@ -14,6 +21,7 @@ import {
 import { Label } from "../ui/label";
 import { AddTaskWrapper } from "./add-task-button";
 import SuggestMissingTask from "./suggest-task";
+import { toast } from "sonner";
 
 export const AddTaskDialog = ({ data }: { data: Doc<"todos"> }) => {
   const { _id, taskName, description, dueDate, priority, projectId, labelId } =
@@ -45,6 +53,8 @@ export const AddTaskDialog = ({ data }: { data: Doc<"todos"> }) => {
 
   const uncheckASubTodoMutation = useMutation(api.subTodos.unCheckASubTodo);
 
+  const deleteATodoMutation = useMutation(api.todos.deleteATodo);
+
   const [todoDetails, setTodoDetails] = useState<
     {
       labelName: string;
@@ -75,16 +85,26 @@ export const AddTaskDialog = ({ data }: { data: Doc<"todos"> }) => {
         value: label?.name,
         icon: <Tag className="w-4 h-4 text-primary capitalize" />,
       },
-      {
-        labelName: "Descripción",
-        value: description,
+      // {
+      //   labelName: "Descripción",
+      //   value: description,
 
-        icon: <Tag className="w-4 h-4 text-primary" />,
-      },
+      //   icon: <Tag className="w-4 h-4 text-primary" />,
+      // },
     ];
 
     setTodoDetails(data);
   }, [project, label?.name, priority, dueDate]);
+  const handleDeleteTodo = (e: any) => {
+    e.preventDefault();
+    const deletedId = deleteATodoMutation({ taskId: _id });
+    if (deletedId !== undefined) {
+      toast.success("Tarea eliminada exitosamente", {
+        duration: 3000,
+      });
+    }
+  };
+
   return (
     <DialogContent className="max-w-4xl lg:h-4/6 flex flex-col md:flex-row lg:justify-between text-right">
       <DialogHeader className="w-full">
@@ -112,6 +132,7 @@ export const AddTaskDialog = ({ data }: { data: Doc<"todos"> }) => {
           <div className="pl-4 overflow-auto max-h-[250px]">
             {incompletedSubtodosByProject.map((task) => (
               <Task
+                taskName={task.taskName}
                 key={task._id}
                 data={task}
                 isCompleted={task.isCompleted}
@@ -127,6 +148,7 @@ export const AddTaskDialog = ({ data }: { data: Doc<"todos"> }) => {
 
             {completedSubtodosByProject.map((task) => (
               <Task
+                taskName={task.taskName}
                 key={task._id}
                 data={task}
                 isCompleted={task.isCompleted}
@@ -153,6 +175,17 @@ export const AddTaskDialog = ({ data }: { data: Doc<"todos"> }) => {
             </div>
           </div>
         ))}
+        <div className="w-full gap-2 grid p-4 justify-end">
+          <form onSubmit={(e) => handleDeleteTodo(e)}>
+            <button
+              type="submit"
+              className="flex items-center justify-center w-10 h-10 bg-red-100 hover:bg-red-200 rounded-full transition-colors duration-200 group"
+              title="Eliminar tarea"
+            >
+              <Trash2Icon className="w-5 h-5 text-red-500 group-hover:text-red-700 transition-colors duration-200" />
+            </button>
+          </form>
+        </div>
       </div>
     </DialogContent>
   );

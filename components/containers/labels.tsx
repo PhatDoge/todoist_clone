@@ -75,10 +75,16 @@ const LabelList = () => {
                   {label.name}
                 </Label>
               </div>
-              <Trash2Icon
-                className="w-4 h-4 text-primary hover:bg-primary hover:rounded-xl hover:text-white cursor-pointer"
-                onClick={() => setDeletingLabelId(label._id)}
-              />
+              {/* Only show delete button if label is not a system label */}
+              {label.type !== "system" && (
+                <button
+                  onClick={() => setDeletingLabelId(label._id)}
+                  className="flex items-center justify-center w-6 h-6 hover:bg-red-100 rounded-full transition-colors duration-200 group"
+                  title="Eliminar etiqueta"
+                >
+                  <Trash2Icon className="w-4 h-4 text-gray-400 group-hover:text-red-500 transition-colors duration-200" />
+                </button>
+              )}
             </motion.div>
           ))}
         </AnimatePresence>

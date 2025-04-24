@@ -220,3 +220,13 @@ export const updateProject = mutation({
     }
   },
 });
+
+export const checkIfProjectIsSystem = query({
+  args: {
+    projectId: v.id("projects"),
+  },
+  handler: async (ctx, { projectId }) => {
+    const project = await ctx.db.get(projectId);
+    return project?.type === "system" || false;
+  },
+});

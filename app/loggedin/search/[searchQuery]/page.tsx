@@ -58,6 +58,7 @@ export default function Search() {
 
             <div className="flex flex-col gap-1 py-4">
               <Todos
+                showDetails={true}
                 items={searchResults.filter(
                   (item: any) => item.isCompleted === false
                 )}
